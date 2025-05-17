@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.game &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.game</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">GameState</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.player</span><span class="w"> </span><span class="kn">import</span> <span class="n">Player</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.npc</span><span class="w"> </span><span class="kn">import</span> <span class="n">NPC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.animal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Animal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span><span class="p">,</span> <span class="n">Consumable</span><span class="p">,</span> <span class="n">Weapon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">map.map</span><span class="w"> </span><span class="kn">import</span> <span class="n">Map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">UIManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.encounter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Encounter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_map</span><span class="p">,</span> <span class="n">load_entities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">systems.combat</span><span class="w"> </span><span class="kn">import</span> <span class="n">CombatSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">systems.quest</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuestSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">systems.dialogue</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogueSystem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">TILE_SIZE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ui.hud</span><span class="w"> </span><span class="kn">import</span> <span class="n">HUD_WIDTH</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">map.pathfinding</span>
+
+<div class="viewcode-block" id="Game">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Game</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main game controller for Hajduk RPG.</span>
+
+<span class="sd">    Handles game state, event loop, rendering, and core systems such as combat, quests, and dialogue.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    screen : pygame.Surface</span>
+<span class="sd">        The main display surface for rendering the game.</span>
+<span class="sd">    clock : pygame.time.Clock</span>
+<span class="sd">        The game clock for managing frame rate.</span>
+<span class="sd">    running : bool</span>
+<span class="sd">        Whether the game loop is running.</span>
+<span class="sd">    state : GameState</span>
+<span class="sd">        The current game state, including map and entities.</span>
+<span class="sd">    events : EventManager</span>
+<span class="sd">        The event manager for posting and processing events.</span>
+<span class="sd">    camera : Camera</span>
+<span class="sd">        The camera object for world-to-screen transforms.</span>
+<span class="sd">    ui_manager : UIManager</span>
+<span class="sd">        The UI manager for HUD and panels.</span>
+<span class="sd">    phase : str</span>
+<span class="sd">        The current game phase (e.g., &#39;PLAYER_TURN&#39;, &#39;NPC_TURN&#39;).</span>
+<span class="sd">    combat_system : CombatSystem</span>
+<span class="sd">        The combat system instance.</span>
+<span class="sd">    quest_system : QuestSystem</span>
+<span class="sd">        The quest system instance.</span>
+<span class="sd">    dialogue_system : DialogueSystem</span>
+<span class="sd">        The dialogue system instance.</span>
+<span class="sd">    selected_tile : tuple or None</span>
+<span class="sd">        The currently selected map tile (x, y) or None.</span>
+<span class="sd">    current_path : list</span>
+<span class="sd">        The current planned path for the player (list of (x, y)).</span>
+<span class="sd">    current_path_costs : list</span>
+<span class="sd">        The action point costs for each step in the current path.</span>
+<span class="sd">    move_confirmed : bool</span>
+<span class="sd">        Whether the player&#39;s move has been confirmed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Game object and all core systems.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        screen : pygame.Surface</span>
+<span class="sd">            The main display surface for rendering the game.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Game.screen">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.screen">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">screen</span> <span class="o">=</span> <span class="n">screen</span></div>
+
+<div class="viewcode-block" id="Game.clock">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.clock">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clock</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">Clock</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.running">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.running">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+        <span class="c1"># Core systems</span>
+<div class="viewcode-block" id="Game.state">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.state">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.events">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.events">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="n">EventManager</span><span class="p">()</span></div>
+
+
+        <span class="c1"># Data-driven loading</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span> <span class="o">=</span> <span class="n">load_map</span><span class="p">(</span><span class="s2">&quot;data/map.json&quot;</span><span class="p">)</span>
+        <span class="n">entities</span> <span class="o">=</span> <span class="n">load_entities</span><span class="p">(</span><span class="s2">&quot;data/entities.json&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entities</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Player</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">npcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entities</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">NPC</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">animals</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entities</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Animal</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">npcs</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">animals</span>
+
+        <span class="c1"># Create camera BEFORE UIManager</span>
+<div class="viewcode-block" id="Game.camera">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.camera">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">TILE_SIZE</span><span class="p">)</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">set_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="p">)</span>
+        <span class="c1"># Ensure camera is centered on player at start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">TILE_SIZE</span> <span class="o">+</span> <span class="n">TILE_SIZE</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">TILE_SIZE</span> <span class="o">+</span> <span class="n">TILE_SIZE</span> <span class="o">//</span> <span class="mi">2</span>
+
+<div class="viewcode-block" id="Game.ui_manager">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.ui_manager">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span> <span class="o">=</span> <span class="n">UIManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">)</span></div>
+
+
+        <span class="c1"># Game phases and systems...</span>
+<div class="viewcode-block" id="Game.phase">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.phase">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;PLAYER_TURN&quot;</span></div>
+
+<div class="viewcode-block" id="Game.combat_system">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.combat_system">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combat_system</span> <span class="o">=</span> <span class="n">CombatSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.quest_system">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.quest_system">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quest_system</span> <span class="o">=</span> <span class="n">QuestSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.dialogue_system">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.dialogue_system">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dialogue_system</span> <span class="o">=</span> <span class="n">DialogueSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+        <span class="c1"># Pathfinding and selection</span>
+<div class="viewcode-block" id="Game.selected_tile">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.selected_tile">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Game.current_path">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.current_path">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Game.current_path_costs">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.current_path_costs">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+        <span class="c1"># Movement confirmation</span>
+<div class="viewcode-block" id="Game.move_confirmed">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.move_confirmed">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># New flag for movement confirmation</span></div>
+
+
+<div class="viewcode-block" id="Game.run">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main game loop. Handles updating, event processing, and rendering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_events</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>  <span class="c1"># Ensure update is called every frame</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 60 FPS</span></div>
+
+
+<div class="viewcode-block" id="Game.handle_events">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.handle_events">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process all Pygame events, including UI and map interactions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEWHEEL</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">apply_zoom</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+
+            <span class="c1"># Always let the UI handle the event first</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">handle_event</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">)</span>
+            <span class="c1"># Only handle map clicks if:</span>
+            <span class="c1"># - No UI panel is open</span>
+            <span class="c1"># - Click is not on the HUD area</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">MOUSEBUTTONDOWN</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">get_open_panel</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">mx</span><span class="p">,</span> <span class="n">my</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">pos</span>
+                <span class="n">sw</span><span class="p">,</span> <span class="n">sh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">mx</span> <span class="o">&lt;</span> <span class="n">sw</span> <span class="o">-</span> <span class="n">HUD_WIDTH</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">handle_map_click</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="c1"># Right-click cancels selection</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+        <span class="c1"># Removed all KEYDOWN and keyboard input logic</span>
+
+<div class="viewcode-block" id="Game.update">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the game state for the current phase (player, NPC, animal turns, etc.).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+        <span class="c1"># --- PLAYER TURN ---</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;PLAYER_TURN&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="c1"># Refill player AP at the start of turn (only if just entered phase)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_player_ap_reset&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_player_ap_reset</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">refill_action_points</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_player_ap_reset</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Only allow player to act if move is confirmed</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">confirm_move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">)</span>
+                <span class="c1"># If path is finished or AP depleted, just clear move_confirmed, but do not advance phase</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">action_points</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+                <span class="n">entity</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="c1"># After player acts, check for item pickup</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_item_encounter</span><span class="p">()</span>
+        <span class="c1"># --- PHASE ADVANCE ---</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;UPDATE_AFTER_PLAYER&quot;</span><span class="p">:</span>
+            <span class="c1"># Clear pathing and selection at the end of player turn</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_player_ap_reset</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># Refill AP for all NPCs at the start of their turn</span>
+            <span class="k">for</span> <span class="n">npc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">npcs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">npc</span><span class="p">,</span> <span class="s1">&#39;refill_action_points&#39;</span><span class="p">):</span>
+                    <span class="n">npc</span><span class="o">.</span><span class="n">refill_action_points</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;NPC_TURN&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;NPC_TURN&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">npc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">npcs</span><span class="p">:</span>
+                <span class="n">npc</span><span class="o">.</span><span class="n">take_turn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_encounters</span><span class="p">(</span><span class="n">initiator</span><span class="o">=</span><span class="n">npc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;UPDATE_AFTER_NPC&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;UPDATE_AFTER_NPC&quot;</span><span class="p">:</span>
+            <span class="c1"># Refill AP for all animals at the start of their turn</span>
+            <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">animals</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">animal</span><span class="p">,</span> <span class="s1">&#39;refill_action_points&#39;</span><span class="p">):</span>
+                    <span class="n">animal</span><span class="o">.</span><span class="n">refill_action_points</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;ANIMAL_TURN&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;ANIMAL_TURN&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">animals</span><span class="p">:</span>
+                <span class="n">animal</span><span class="o">.</span><span class="n">take_turn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_encounters</span><span class="p">(</span><span class="n">initiator</span><span class="o">=</span><span class="n">animal</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;UPDATE_AFTER_ANIMAL&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;UPDATE_AFTER_ANIMAL&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;END_OF_TURN&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;END_OF_TURN&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">process_queue</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;PLAYER_TURN&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;MENU&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="c1"># End turn button (HUD/UI) triggers phase advance only during PLAYER_TURN</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="p">,</span> <span class="s2">&quot;_end_turn_requested&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;PLAYER_TURN&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">move_confirmed</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_player_ap_reset</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="s2">&quot;UPDATE_AFTER_PLAYER&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">_end_turn_requested</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Game.check_encounters">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.check_encounters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_encounters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for and resolve encounters between entities or with map objects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        initiator : Entity</span>
+<span class="sd">            The entity whose turn is being processed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check for entity-entity encounters</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">initiator</span> <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">initiator</span><span class="o">.</span><span class="n">x</span> <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">initiator</span><span class="o">.</span><span class="n">y</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entity</span><span class="p">,</span> <span class="s2">&quot;alive&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">encounter</span> <span class="o">=</span> <span class="n">Encounter</span><span class="p">(</span><span class="n">initiator</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="s2">&quot;entity&quot;</span><span class="p">)</span>
+                <span class="n">encounter</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="c1"># Check for map object encounters (blockers)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="s2">&quot;is_obstacle&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">is_obstacle</span><span class="p">(</span><span class="n">initiator</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">initiator</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+            <span class="n">encounter</span> <span class="o">=</span> <span class="n">Encounter</span><span class="p">(</span><span class="n">initiator</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span>
+            <span class="n">encounter</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Game.is_position_free">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.is_position_free">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_position_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ignore_entity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a map position is free of obstacles and entities.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : int</span>
+<span class="sd">            X coordinate (tile index).</span>
+<span class="sd">        y : int</span>
+<span class="sd">            Y coordinate (tile index).</span>
+<span class="sd">        ignore_entity : Entity, optional</span>
+<span class="sd">            An entity to ignore in the check (e.g., the moving entity itself).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the position is free, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check map boundaries (assuming 40x22 grid for 1280x720, 32px tiles)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">width</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">height</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Check for obstacles (expand this when you add obstacles to the map)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="s2">&quot;is_obstacle&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">is_obstacle</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Check for other entities</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">ignore_entity</span> <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">entity</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">y</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Game.render">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.render">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Render the game map, entities, UI, and overlays to the screen.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="p">)</span>
+        <span class="c1"># --- Draw path preview before entities so it&#39;s under them ---</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">draw_path_preview</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">action_points</span>
+            <span class="p">)</span>
+        <span class="c1"># --- Draw selected tile highlight ---</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span><span class="p">:</span>
+            <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">world_to_screen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">TILE_SIZE</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">,</span> <span class="n">TILE_SIZE</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="p">)</span>
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Game.check_item_encounter">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.check_item_encounter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_item_encounter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the player is on an item and handle item pickup encounters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">encounter</span> <span class="o">=</span> <span class="n">Encounter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">)</span>
+            <span class="n">outcome</span> <span class="o">=</span> <span class="n">encounter</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">outcome</span> <span class="o">==</span> <span class="s2">&quot;picked_up&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">npc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">npcs</span><span class="p">:</span>
+            <span class="n">npc</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">animals</span><span class="p">:</span>
+            <span class="n">animal</span><span class="o">.</span><span class="n">game</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Game.handle_map_click">
+<a class="viewcode-back" href="../../autoapi/core/game/index.html#core.game.Game.handle_map_click">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_map_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle mouse clicks on the map, calculate pathfinding, and update player path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mx : int</span>
+<span class="sd">            Mouse X coordinate (pixels).</span>
+<span class="sd">        my : int</span>
+<span class="sd">            Mouse Y coordinate (pixels).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wx</span><span class="p">,</span> <span class="n">wy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">screen_to_world</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+        <span class="n">tx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wx</span> <span class="o">//</span> <span class="n">TILE_SIZE</span><span class="p">)</span>
+        <span class="n">ty</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wy</span> <span class="o">//</span> <span class="n">TILE_SIZE</span><span class="p">)</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">)</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">height</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">is_walkable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">map</span><span class="o">.</span><span class="n">is_passable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="n">path</span><span class="p">,</span> <span class="n">costs</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">pathfinding</span><span class="o">.</span><span class="n">astar</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">is_walkable</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Store for drawing and movement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_tile</span> <span class="o">=</span> <span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_path_costs</span> <span class="o">=</span> <span class="n">costs</span>
+
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span> <span class="o">=</span> <span class="n">path</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="o">=</span> <span class="n">costs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">player</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="o">=</span> <span class="p">[]</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

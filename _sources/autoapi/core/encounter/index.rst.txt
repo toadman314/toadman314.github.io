@@ -1,0 +1,248 @@
+core.encounter
+==============
+
+.. py:module:: core.encounter
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.encounter.Encounter
+   core.encounter.Interaction
+   core.encounter.KillEntityInteraction
+   core.encounter.DisengageEntityInteraction
+   core.encounter.PickUpItemInteraction
+   core.encounter.LeaveItemInteraction
+   core.encounter.TradeInteraction
+   core.encounter.DialogueInteraction
+   core.encounter.EquipInteraction
+
+
+Module Contents
+---------------
+
+.. py:class:: Encounter(initiator, target, encounter_type)
+
+   Handles an encounter between two entities or an entity and an object/item.
+
+   .. attribute:: initiator
+
+      The entity initiating the encounter.
+
+      :type: Entity
+
+   .. attribute:: target
+
+      The target of the encounter (entity, item, or object).
+
+      :type: Entity or object
+
+   .. attribute:: encounter_type
+
+      The type of encounter (e.g., 'entity', 'item', 'object').
+
+      :type: str
+
+
+   .. py:attribute:: initiator
+
+
+   .. py:attribute:: target
+
+
+   .. py:attribute:: encounter_type
+
+
+   .. py:method:: resolve()
+
+      Resolve the encounter by selecting and executing an interaction.
+
+      :returns: The outcome of the interaction, or None if no interaction occurred.
+      :rtype: str or None
+
+
+
+.. py:class:: Interaction
+
+   Base class for all interactions during encounters.
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: KillEntityInteraction
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for killing an entity.
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: DisengageEntityInteraction
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for disengaging from an encounter.
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: PickUpItemInteraction(item)
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for picking up an item.
+
+
+   .. py:attribute:: item
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: LeaveItemInteraction(item)
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for leaving an item.
+
+
+   .. py:attribute:: item
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: TradeInteraction
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for trading with another entity.
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: DialogueInteraction
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for starting a dialogue.
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+
+.. py:class:: EquipInteraction(item)
+
+   Bases: :py:obj:`Interaction`
+
+
+   Interaction for equipping an item.
+
+
+   .. py:attribute:: item
+
+
+   .. py:method:: execute(initiator, target)
+
+      Execute the interaction between initiator and target.
+
+      :param initiator: The entity initiating the interaction.
+      :type initiator: Entity
+      :param target: The target of the interaction.
+      :type target: Entity or object
+
+      :returns: The outcome of the interaction.
+      :rtype: str
+
+
+

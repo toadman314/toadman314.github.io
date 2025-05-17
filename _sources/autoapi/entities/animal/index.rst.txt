@@ -1,0 +1,96 @@
+entities.animal
+===============
+
+.. py:module:: entities.animal
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.animal.Animal
+
+
+Module Contents
+---------------
+
+.. py:class:: Animal(x, y)
+
+   Bases: :py:obj:`entities.base.Entity`
+
+
+   Represents an animal entity with simple wandering behavior.
+
+   .. attribute:: wander_behavior
+
+      The behavior for wandering randomly.
+
+      :type: Behavior
+
+   .. attribute:: _base_max_action_points
+
+      The base maximum action points for the animal.
+
+      :type: int
+
+   .. attribute:: _action_points
+
+      The current action points.
+
+      :type: int
+
+
+   .. py:attribute:: color
+      :value: (120, 120, 220)
+
+
+
+   .. py:attribute:: wander_behavior
+
+
+   .. py:property:: max_action_points
+
+      Get the maximum action points for the animal.
+
+      :returns: The maximum action points.
+      :rtype: int
+
+
+   .. py:property:: action_points
+
+      Get the current action points for the animal.
+
+      :returns: The current action points.
+      :rtype: int
+
+
+   .. py:method:: refill_action_points()
+
+      Refill the animal's action points to the maximum value.
+
+
+
+   .. py:method:: take_turn(game)
+
+      Execute the animal's turn using its wander behavior.
+
+      :param game: The main game object.
+      :type game: Game
+
+
+
+   .. py:method:: choose_interaction(target, encounter_type)
+
+      Always disengages when encountering another entity.
+
+      :param target: The encountered entity.
+      :type target: Entity
+      :param encounter_type: The type of encounter.
+      :type encounter_type: str
+
+      :returns: The interaction to disengage.
+      :rtype: DisengageEntityInteraction
+
+
+

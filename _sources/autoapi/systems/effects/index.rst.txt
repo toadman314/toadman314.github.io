@@ -1,0 +1,192 @@
+systems.effects
+===============
+
+.. py:module:: systems.effects
+
+.. autoapi-nested-parse::
+
+   systems.effects
+   ================
+
+   Effect system for managing stat modifiers and consequences from items, actions, states, and encounters.
+
+   Classes
+   -------
+   - Effect: Represents a single stat modifier.
+   - EffectType: Enum for effect duration/type.
+   - EffectManager: Manages all effects on an entity (e.g., Player).
+
+   .. seealso:: :py:obj:`-`, :py:obj:`-`, :py:obj:`-`
+
+   .. rubric:: References
+
+   - InventoryUI, CharacterUI: Display effects and modified stats.
+   - GameState: Stores active effects for save/load.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   systems.effects.EffectType
+   systems.effects.Effect
+   systems.effects.EffectManager
+
+
+Module Contents
+---------------
+
+.. py:class:: EffectType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   Enum for different effect durations/types.
+
+
+   .. py:attribute:: PERMANENT
+      :value: 'permanent'
+
+
+
+   .. py:attribute:: CONDITIONED
+      :value: 'conditioned'
+
+
+
+   .. py:attribute:: TEMPORARY
+      :value: 'temporary'
+
+
+
+   .. py:attribute:: CONTEXTUAL
+      :value: 'contextual'
+
+
+
+.. py:class:: Effect(stat, value, mode = 'add', effect_type = EffectType.PERMANENT, source = None, duration = None, condition = None)
+
+   Represents a stat modifier effect.
+
+   :param stat: The name of the stat to modify (e.g., 'strength').
+   :type stat: str
+   :param value: The value to add (or multiply, if mode is 'mul').
+   :type value: float
+   :param mode: 'add' for additive, 'mul' for multiplicative (default 'add').
+   :type mode: str, optional
+   :param effect_type: The type/duration of the effect.
+   :type effect_type: EffectType
+   :param source: The source of the effect (item, skill, etc.).
+   :type source: Any, optional
+   :param duration: Number of turns for temporary effects.
+   :type duration: int, optional
+   :param condition: Function to check if the effect is active (for conditioned/contextual).
+   :type condition: Callable, optional
+
+
+   .. py:attribute:: stat
+
+
+   .. py:attribute:: value
+
+
+   .. py:attribute:: mode
+      :value: 'add'
+
+
+
+   .. py:attribute:: effect_type
+
+
+   .. py:attribute:: source
+      :value: None
+
+
+
+   .. py:attribute:: duration
+      :value: None
+
+
+
+   .. py:attribute:: condition
+      :value: None
+
+
+
+   .. py:attribute:: active
+      :value: True
+
+
+
+   .. py:method:: is_active(context = None)
+
+      Check if the effect is currently active.
+
+      :param context: Context for evaluating conditions.
+      :type context: dict, optional
+
+      :returns: True if the effect is active.
+      :rtype: bool
+
+
+
+.. py:class:: EffectManager
+
+   Manages all effects for an entity (e.g., Player).
+
+   .. attribute:: effects
+
+      All effects currently applied to the entity.
+
+      :type: list of Effect
+
+   .. method:: add_effect(effect):
+
+      Add an effect.
+
+   .. method:: remove_effect(effect):
+
+      Remove an effect.
+
+   .. method:: update():
+
+      Update all effects (e.g., decrement durations).
+
+   .. method:: get_stat_modifiers(stat, context=None):
+
+      Get all modifiers for a given stat.
+
+
+
+   .. py:attribute:: effects
+      :type:  List[Effect]
+      :value: []
+
+
+
+   .. py:method:: add_effect(effect)
+
+
+   .. py:method:: remove_effect(effect)
+
+
+   .. py:method:: update()
+
+      Update all effects (decrement durations, remove expired).
+
+
+
+   .. py:method:: get_stat_modifiers(stat, context = None)
+
+      Get all active effects for a given stat.
+
+
+
+   .. py:method:: get_modified_stat(base_value, stat, context = None)
+
+      Calculate the modified stat value after applying all effects.
+
+
+

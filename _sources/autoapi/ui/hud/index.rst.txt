@@ -1,0 +1,162 @@
+ui.hud
+======
+
+.. py:module:: ui.hud
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ui.hud.HUD_WIDTH
+   ui.hud.BUTTON_SIZE
+   ui.hud.BUTTON_PADDING
+   ui.hud.HUD_BUTTONS
+   ui.hud.ACTION_BUTTONS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.hud.PlayerHUD
+
+
+Module Contents
+---------------
+
+.. py:data:: HUD_WIDTH
+   :value: 96
+
+
+.. py:data:: BUTTON_SIZE
+   :value: 32
+
+
+.. py:data:: BUTTON_PADDING
+   :value: 12
+
+
+.. py:data:: HUD_BUTTONS
+
+.. py:data:: ACTION_BUTTONS
+
+.. py:class:: PlayerHUD(player, game_state, ui_manager)
+
+   HUD always visible on the right, showing player info and action buttons.
+
+   .. attribute:: player
+
+      The player character whose info is displayed.
+
+      :type: Player
+
+   .. attribute:: game_state
+
+      The current game state.
+
+      :type: GameState
+
+   .. attribute:: ui_manager
+
+      The UI manager for panel toggling and event routing.
+
+      :type: UIManager
+
+   .. attribute:: font
+
+      Font used for HUD text.
+
+      :type: pygame.font.Font
+
+   .. attribute:: button_rects
+
+      Mapping of button names to their screen rectangles.
+
+      :type: dict
+
+   .. attribute:: action_button_rects
+
+      Mapping of action button names to their screen rectangles.
+
+      :type: dict
+
+   .. attribute:: hovered_button
+
+      Name of the currently hovered button, if any.
+
+      :type: str or None
+
+   .. attribute:: bg_image
+
+      HUD panel background image.
+
+      :type: pygame.Surface
+
+   .. attribute:: button_images
+
+      Mapping of button names to their images.
+
+      :type: dict
+
+   .. attribute:: action_button_images
+
+      Mapping of action button names to their images.
+
+      :type: dict
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: game_state
+
+
+   .. py:attribute:: ui_manager
+
+
+   .. py:attribute:: font
+
+
+   .. py:attribute:: button_rects
+
+
+   .. py:attribute:: action_button_rects
+
+
+   .. py:attribute:: hovered_button
+      :value: None
+
+
+
+   .. py:attribute:: bg_image
+
+
+   .. py:attribute:: button_images
+
+
+   .. py:attribute:: action_button_images
+
+
+   .. py:method:: draw(screen)
+
+      Draw the HUD, including permanent and action buttons, and player info.
+
+      :param screen: The display surface to draw the HUD on.
+      :type screen: pygame.Surface
+
+
+
+   .. py:method:: handle_event(event, allow_action_buttons=True)
+
+      Handle a Pygame event and route it to the appropriate HUD button or action button.
+
+      :param event: The event to handle.
+      :type event: pygame.event.Event
+      :param allow_action_buttons: Whether to allow action button events (default: True).
+      :type allow_action_buttons: bool, optional
+
+
+

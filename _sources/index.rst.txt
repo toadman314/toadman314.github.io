@@ -1,0 +1,42 @@
+.. Hajduk documentation master file, created by
+   sphinx-quickstart on Fri May 16 23:23:57 2025.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Hajduk
+======
+
+A modern, extensible 2D RPG engine and game, featuring modular architecture, robust entity and map systems, and a flexible UI. This documentation provides a complete code map, API reference, and guides for contributors.
+
+Features
+--------
+- Modular core, entity, map, system, and UI layers
+- Data-driven assets and configuration
+- Extensible combat, quest, and dialogue systems
+- Auto-generated API documentation (see Code Reference)
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   autoapi/index
+   how_to_contribute
+   examples
+
+Getting Started
+---------------
+To get started with Hajduk, clone the repository and review the project structure. See the Code Reference for details on each module.
+
+Code Reference
+--------------
+Browse the full API documentation generated from the source code:
+
+- :doc:`autoapi/index`
+
+How to Contribute
+-----------------
+See :doc:`how_to_contribute` for guidelines on contributing code, reporting issues, and submitting pull requests.
+
+.. note::
+   This documentation is auto-generated and updated regularly. For questions or suggestions, open an issue or contact the maintainers.
+

@@ -1,0 +1,56 @@
+map.pathfinding
+===============
+
+.. py:module:: map.pathfinding
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   map.pathfinding.heuristic
+   map.pathfinding.astar
+
+
+Module Contents
+---------------
+
+.. py:function:: heuristic(a, b)
+
+   Diagonal distance heuristic (octile) for A* pathfinding.
+
+   :param a: (x, y) coordinates of the first point.
+   :type a: tuple
+   :param b: (x, y) coordinates of the second point.
+   :type b: tuple
+
+   :returns: The octile distance between a and b.
+   :rtype: int
+
+
+.. py:function:: astar(start, goal, is_walkable, width, height, get_cost=None)
+
+   A* pathfinding algorithm for grid-based maps.
+
+   :param start: (x, y) start coordinates.
+   :type start: tuple
+   :param goal: (x, y) goal coordinates.
+   :type goal: tuple
+   :param is_walkable: Function taking (x, y) and returning True if the tile is walkable.
+   :type is_walkable: callable
+   :param width: Width of the map in tiles.
+   :type width: int
+   :param height: Height of the map in tiles.
+   :type height: int
+   :param get_cost: Function taking (x, y) and returning the movement cost for the tile.
+   :type get_cost: callable, optional
+
+   :returns:
+
+             (path, step_costs):
+                 path : list of (x, y) tuples representing the path.
+                 step_costs : list of floats representing the cost of each step.
+   :rtype: tuple
+
+

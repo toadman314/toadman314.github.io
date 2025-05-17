@@ -1,0 +1,41 @@
+.. _how_to_contribute:
+
+How to Contribute
+=================
+
+We welcome contributions of all kinds to the Hajduk project! Please follow these guidelines to help us maintain a high-quality, collaborative codebase.
+
+Getting Started
+---------------
+1. Fork the repository and clone your fork locally.
+2. Create a new branch for your feature or bugfix.
+3. Make your changes, following the project’s code style and structure.
+4. Add or update documentation and tests as needed.
+5. Commit your changes with clear, descriptive messages.
+6. Push your branch and open a pull request (PR) against the main repository.
+
+Code Style
+----------
+- Use clear, descriptive names for variables, functions, and classes.
+- Write docstrings for all public modules, classes, and functions.
+- Keep functions and classes focused and modular.
+- Follow PEP 8 for Python code style.
+
+Reporting Issues
+----------------
+- Search existing issues before opening a new one.
+- Provide a clear, descriptive title and detailed information.
+- Include steps to reproduce, expected behavior, and screenshots if helpful.
+
+Review Process
+--------------
+- All PRs are reviewed by maintainers or core contributors.
+- Address review comments and update your PR as needed.
+- Once approved, your changes will be merged.
+
+Community
+---------
+- Be respectful and constructive in all communications.
+- For questions or discussions, use the project’s issue tracker or discussion board.
+
+Thank you for helping make Hajduk better!

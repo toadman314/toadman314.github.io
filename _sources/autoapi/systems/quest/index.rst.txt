@@ -1,0 +1,74 @@
+systems.quest
+=============
+
+.. py:module:: systems.quest
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   systems.quest.QuestSystem
+
+
+Module Contents
+---------------
+
+.. py:class:: QuestSystem(game)
+
+   Manages quest states, objectives, and rewards.
+
+   .. attribute:: game
+
+      Reference to the main game object.
+
+      :type: Game
+
+   .. attribute:: active_quests
+
+      List of currently active quests.
+
+      :type: list
+
+   .. seealso::
+
+      :py:obj:`ui.questlog.QuestLogUI`
+          UI for displaying quest log.
+
+      :py:obj:`entities.player.Player`
+          Player object whose quests are tracked.
+
+      :py:obj:`core.state.GameState`
+          Stores quest data in game state.
+
+   .. rubric:: References
+
+   - QuestLogUI: Displays quest data to the player.
+   - Player: Source and recipient of quest progress.
+   - GameState: Stores and loads quest data.
+
+
+   .. py:attribute:: game
+
+
+   .. py:attribute:: active_quests
+      :value: []
+
+
+
+   .. py:method:: update_quests()
+
+      Update the state of all active quests.
+
+
+
+   .. py:method:: add_quest(quest)
+
+      Add a new quest to the active quest list.
+
+      :param quest: The quest to add.
+      :type quest: object
+
+
+

@@ -1,0 +1,128 @@
+entities.npc
+============
+
+.. py:module:: entities.npc
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.npc.NPC
+
+
+Module Contents
+---------------
+
+.. py:class:: NPC(x, y, vision_range=6)
+
+   Bases: :py:obj:`entities.base.Entity`
+
+
+   Represents a non-player character (NPC) with vision and AI behaviors.
+
+   .. attribute:: vision_range
+
+      The number of tiles the NPC can see.
+
+      :type: int
+
+   .. attribute:: chase_behavior
+
+      The behavior for chasing the player.
+
+      :type: Behavior
+
+   .. attribute:: wander_behavior
+
+      The behavior for wandering randomly.
+
+      :type: Behavior
+
+   .. attribute:: _base_max_action_points
+
+      The base maximum action points for the NPC.
+
+      :type: int
+
+   .. attribute:: _action_points
+
+      The current action points.
+
+      :type: int
+
+
+   .. py:attribute:: color
+      :value: (200, 80, 80)
+
+
+
+   .. py:attribute:: vision_range
+      :value: 6
+
+
+
+   .. py:attribute:: chase_behavior
+
+
+   .. py:attribute:: wander_behavior
+
+
+   .. py:property:: max_action_points
+
+      Get the maximum action points for the NPC.
+
+      :returns: The maximum action points.
+      :rtype: int
+
+
+   .. py:property:: action_points
+
+      Get the current action points for the NPC.
+
+      :returns: The current action points.
+      :rtype: int
+
+
+   .. py:method:: refill_action_points()
+
+      Refill the NPC's action points to the maximum value.
+
+
+
+   .. py:method:: can_see_player(game)
+
+      Determines if the NPC can see the player based on vision range.
+
+      :param game: The main game object.
+      :type game: Game
+
+      :returns: True if the player is within vision range, False otherwise.
+      :rtype: bool
+
+
+
+   .. py:method:: take_turn(game)
+
+      Executes the NPC's turn, chasing the player if visible, otherwise wandering.
+
+      :param game: The main game object.
+      :type game: Game
+
+
+
+   .. py:method:: choose_interaction(target, encounter_type)
+
+      Always disengages when encountering another entity.
+
+      :param target: The encountered entity.
+      :type target: Entity
+      :param encounter_type: The type of encounter.
+      :type encounter_type: str
+
+      :returns: The interaction to disengage.
+      :rtype: DisengageEntityInteraction
+
+
+

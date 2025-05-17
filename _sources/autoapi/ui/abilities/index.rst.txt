@@ -1,0 +1,85 @@
+ui.abilities
+============
+
+.. py:module:: ui.abilities
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.abilities.AbilitiesUI
+
+
+Module Contents
+---------------
+
+.. py:class:: AbilitiesUI(player)
+
+   UI for displaying and managing player abilities and perks.
+
+   .. attribute:: player
+
+      The player whose abilities are displayed.
+
+      :type: Player
+
+   .. attribute:: visible
+
+      Whether the abilities UI is visible.
+
+      :type: bool
+
+   .. attribute:: font
+
+      Font used for abilities text.
+
+      :type: pygame.font.Font
+
+   .. seealso::
+
+      :py:obj:`entities.player.Player`
+          Player object whose abilities are shown.
+
+      :py:obj:`ui.manager.UIManager`
+          Manages all UI panels, including this one.
+
+   .. rubric:: References
+
+   - Player: Provides abilities/perks data.
+   - UIManager: Controls panel toggling and event routing.
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: visible
+      :value: False
+
+
+
+   .. py:attribute:: font
+
+
+   .. py:attribute:: bg_image
+
+
+   .. py:method:: toggle()
+
+      Toggle the visibility of the Abilities UI.
+
+
+
+   .. py:method:: handle_event(event)
+
+      Handle events for the Abilities UI.
+
+
+
+   .. py:method:: draw(screen)
+
+      Draw the Abilities UI panel with the graphical background.
+
+
+

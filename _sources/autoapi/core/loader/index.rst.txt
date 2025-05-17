@@ -1,0 +1,68 @@
+core.loader
+===========
+
+.. py:module:: core.loader
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   core.loader.logger
+   core.loader.ITEM_CLASSES
+   core.loader.ENTITY_CLASSES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   core.loader.load_items
+   core.loader.load_entities
+   core.loader.load_map
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:data:: ITEM_CLASSES
+
+.. py:data:: ENTITY_CLASSES
+
+.. py:function:: load_items(path)
+
+   Load items from a JSON file.
+
+   :param path: Path to the JSON file containing item data.
+   :type path: str
+
+   :returns: List of Item instances loaded from the file.
+   :rtype: list
+
+
+.. py:function:: load_entities(path)
+
+   Load entities from a JSON file.
+
+   :param path: Path to the JSON file containing entity data.
+   :type path: str
+
+   :returns: List of entity instances loaded from the file.
+   :rtype: list
+
+
+.. py:function:: load_map(path)
+
+   Load a map from a JSON file.
+
+   :param path: Path to the JSON file containing map data.
+   :type path: str
+
+   :returns: The loaded Map instance.
+   :rtype: Map
+
+

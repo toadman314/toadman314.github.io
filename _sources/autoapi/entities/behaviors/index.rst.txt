@@ -1,0 +1,94 @@
+entities.behaviors
+==================
+
+.. py:module:: entities.behaviors
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.behaviors.Behavior
+   entities.behaviors.ChasePlayerBehavior
+   entities.behaviors.WanderBehavior
+   entities.behaviors.IdleBehavior
+
+
+Module Contents
+---------------
+
+.. py:class:: Behavior
+
+   Base class for entity behaviors.
+
+
+   .. py:method:: take_turn(entity, game)
+
+      Defines the action taken by the entity on its turn.
+      Override in subclasses.
+
+      :param entity: The entity taking the turn.
+      :type entity: Entity
+      :param game: The main game object.
+      :type game: Game
+
+
+
+.. py:class:: ChasePlayerBehavior
+
+   Bases: :py:obj:`Behavior`
+
+
+   Behavior for chasing the player using pathfinding.
+
+
+   .. py:method:: take_turn(entity, game)
+
+      Move towards the player, or trigger an encounter if adjacent.
+
+      :param entity: The entity taking the turn.
+      :type entity: Entity
+      :param game: The main game object.
+      :type game: Game
+
+
+
+.. py:class:: WanderBehavior
+
+   Bases: :py:obj:`Behavior`
+
+
+   Behavior for random wandering.
+
+
+   .. py:method:: take_turn(entity, game)
+
+      Move randomly if possible.
+
+      :param entity: The entity taking the turn.
+      :type entity: Entity
+      :param game: The main game object.
+      :type game: Game
+
+
+
+.. py:class:: IdleBehavior
+
+   Bases: :py:obj:`Behavior`
+
+
+   Behavior for doing nothing.
+
+
+   .. py:method:: take_turn(entity, game)
+
+      Do nothing on turn.
+
+      :param entity: The entity taking the turn.
+      :type entity: Entity
+      :param game: The main game object.
+      :type game: Game
+
+
+

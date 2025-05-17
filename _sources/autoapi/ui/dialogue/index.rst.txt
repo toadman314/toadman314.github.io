@@ -1,0 +1,69 @@
+ui.dialogue
+===========
+
+.. py:module:: ui.dialogue
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.dialogue.DialogueUI
+
+
+Module Contents
+---------------
+
+.. py:class:: DialogueUI(player)
+
+   UI for displaying dialogue with NPCs.
+
+   .. attribute:: player
+
+      The player involved in the dialogue.
+
+      :type: Player
+
+   .. attribute:: visible
+
+      Whether the dialogue UI is visible.
+
+      :type: bool
+
+   .. attribute:: font
+
+      Font used for dialogue text.
+
+      :type: pygame.font.Font
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: visible
+      :value: False
+
+
+
+   .. py:attribute:: font
+
+
+   .. py:method:: toggle()
+
+      Toggle the visibility of the Dialogue UI.
+
+
+
+   .. py:method:: handle_event(event)
+
+      Handle events for the Dialogue UI.
+
+
+
+   .. py:method:: draw(screen)
+
+      Draw the Dialogue UI panel.
+
+
+

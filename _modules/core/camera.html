@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.camera &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.camera</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
+
+<div class="viewcode-block" id="Camera">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Camera</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Camera for handling world-to-screen and screen-to-world coordinate transforms.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    width : int</span>
+<span class="sd">        Width of the map in tiles.</span>
+<span class="sd">    height : int</span>
+<span class="sd">        Height of the map in tiles.</span>
+<span class="sd">    tile_size : int</span>
+<span class="sd">        Size of each tile in pixels.</span>
+<span class="sd">    zoom : float</span>
+<span class="sd">        Current zoom level.</span>
+<span class="sd">    max_zoom : float</span>
+<span class="sd">        Maximum allowed zoom level.</span>
+<span class="sd">    min_zoom : float</span>
+<span class="sd">        Minimum allowed zoom level.</span>
+<span class="sd">    target : Entity or None</span>
+<span class="sd">        The entity the camera follows (usually the player).</span>
+<span class="sd">    cam_px : float</span>
+<span class="sd">        Camera center X in pixels.</span>
+<span class="sd">    cam_py : float</span>
+<span class="sd">        Camera center Y in pixels.</span>
+<span class="sd">    smooth_factor : float</span>
+<span class="sd">        Smoothing factor for camera movement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">tile_size</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<div class="viewcode-block" id="Camera.width">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.width">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span></div>
+
+<div class="viewcode-block" id="Camera.height">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.height">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span></div>
+
+<div class="viewcode-block" id="Camera.tile_size">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.tile_size">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">=</span> <span class="n">tile_size</span></div>
+
+<div class="viewcode-block" id="Camera.zoom">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.zoom">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span> <span class="o">=</span> <span class="n">zoom</span></div>
+
+<div class="viewcode-block" id="Camera.max_zoom">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.max_zoom">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_zoom</span> <span class="o">=</span> <span class="mf">2.0</span></div>
+
+<div class="viewcode-block" id="Camera.min_zoom">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.min_zoom">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_zoom</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="Camera.target">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.target">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Should be set to the player entity</span></div>
+
+
+        <span class="c1"># Camera center in pixel coordinates (float for smooth movement)</span>
+<div class="viewcode-block" id="Camera.cam_px">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.cam_px">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="Camera.cam_py">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.cam_py">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+<div class="viewcode-block" id="Camera.smooth_factor">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.smooth_factor">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smooth_factor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># No smoothing for debugging</span></div>
+
+
+<div class="viewcode-block" id="Camera.set_target">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.set_target">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the camera&#39;s target entity and center on it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        entity : Entity</span>
+<span class="sd">            The entity to follow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">entity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">=</span> <span class="n">entity</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">//</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="Camera.update">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the camera position to follow the target entity.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        screen_width : int</span>
+<span class="sd">            Width of the screen in pixels.</span>
+<span class="sd">        screen_height : int</span>
+<span class="sd">            Height of the screen in pixels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Center of the target (player) in pixels</span>
+        <span class="n">target_px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">target_py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="c1"># Instantly center camera on player (for debugging, smoothing can be re-enabled later)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">=</span> <span class="n">target_px</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">=</span> <span class="n">target_py</span></div>
+
+
+<div class="viewcode-block" id="Camera.world_to_screen">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.world_to_screen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">world_to_screen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert world (map) coordinates to screen (pixel) coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : int</span>
+<span class="sd">            World X coordinate (tile index).</span>
+<span class="sd">        y : int</span>
+<span class="sd">            World Y coordinate (tile index).</span>
+<span class="sd">        screen_width : int</span>
+<span class="sd">            Width of the screen in pixels.</span>
+<span class="sd">        screen_height : int</span>
+<span class="sd">            Height of the screen in pixels.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (screen_x, screen_y) in pixels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use smooth camera center</span>
+        <span class="n">offset_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">-</span> <span class="p">(</span><span class="n">screen_width</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">))</span>
+        <span class="n">offset_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">-</span> <span class="p">(</span><span class="n">screen_height</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">))</span>
+        <span class="n">screen_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">-</span> <span class="n">offset_x</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span>
+        <span class="n">screen_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">-</span> <span class="n">offset_y</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">screen_x</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">screen_y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Camera.apply_zoom">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.apply_zoom">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_zoom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjust the camera zoom level.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta : float</span>
+<span class="sd">            Amount to change the zoom by.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span> <span class="o">+=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_zoom</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_zoom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Camera.screen_to_world">
+<a class="viewcode-back" href="../../autoapi/core/camera/index.html#core.camera.Camera.screen_to_world">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">screen_to_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">screen_width</span><span class="p">,</span> <span class="n">screen_height</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts screen (pixel) coordinates to world (map) coordinates, accounting for camera position and zoom.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sx : int</span>
+<span class="sd">            Screen X coordinate (pixels).</span>
+<span class="sd">        sy : int</span>
+<span class="sd">            Screen Y coordinate (pixels).</span>
+<span class="sd">        screen_width : int</span>
+<span class="sd">            Width of the screen in pixels.</span>
+<span class="sd">        screen_height : int</span>
+<span class="sd">            Height of the screen in pixels.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (wx, wy) world coordinates in pixels (float).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offset_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_px</span> <span class="o">-</span> <span class="p">(</span><span class="n">screen_width</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">))</span>
+        <span class="n">offset_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_py</span> <span class="o">-</span> <span class="p">(</span><span class="n">screen_height</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">))</span>
+        <span class="n">wx</span> <span class="o">=</span> <span class="p">(</span><span class="n">sx</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset_x</span>
+        <span class="n">wy</span> <span class="o">=</span> <span class="p">(</span><span class="n">sy</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset_y</span>
+        <span class="k">return</span> <span class="n">wx</span><span class="p">,</span> <span class="n">wy</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,247 @@
+ui.inventory
+============
+
+.. py:module:: ui.inventory
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   ui.inventory.EQUIPMENT_SLOTS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.inventory.InventoryUI
+
+
+Module Contents
+---------------
+
+.. py:data:: EQUIPMENT_SLOTS
+   :value: ['head', 'face', 'torso', 'left arm', 'right arm', 'left hand', 'right hand', 'left palm',...
+
+
+.. py:class:: InventoryUI(player, cols=8, rows=6, cell_size=48)
+
+   UI for displaying and managing the player's inventory and equipment.
+
+   .. attribute:: player
+
+      The player whose inventory is displayed.
+
+      :type: Player
+
+   .. attribute:: cols
+
+      Number of inventory columns.
+
+      :type: int
+
+   .. attribute:: rows
+
+      Number of inventory rows.
+
+      :type: int
+
+   .. attribute:: cell_size
+
+      Size of each inventory cell in pixels.
+
+      :type: int
+
+   .. attribute:: visible
+
+      Whether the inventory UI is visible.
+
+      :type: bool
+
+   .. attribute:: selected_index
+
+      Index of the currently selected inventory slot.
+
+      :type: int or None
+
+   .. attribute:: dragging
+
+      Information about the currently dragged item.
+
+      :type: tuple or None
+
+   .. attribute:: context_menu
+
+      Context menu state.
+
+      :type: tuple or None
+
+   .. attribute:: message
+
+      Message to display to the user.
+
+      :type: str
+
+   .. attribute:: hovered_index
+
+      Index of the currently hovered inventory slot.
+
+      :type: int or None
+
+   .. attribute:: hovered_equip
+
+      Name of the currently hovered equipment slot.
+
+      :type: str or None
+
+   .. attribute:: font
+
+      Font used for inventory text.
+
+      :type: pygame.font.Font
+
+   .. attribute:: equip_slot_size
+
+      Size of each equipment slot in pixels.
+
+      :type: int
+
+   .. attribute:: equip_slots
+
+      List of equipment slot names.
+
+      :type: list
+
+   .. attribute:: split_prompt
+
+      State for the split stack prompt.
+
+      :type: tuple or None
+
+   .. attribute:: bg_image
+
+      Inventory background image.
+
+      :type: pygame.Surface
+
+   .. seealso::
+
+      :py:obj:`entities.player.Player`
+          Player object whose inventory is shown.
+
+      :py:obj:`ui.manager.UIManager`
+          Manages all UI panels, including this one.
+
+      :py:obj:`systems.effects.EffectManager`
+          Used by Player to apply equipment effects.
+
+   .. rubric:: References
+
+   - Player: Provides inventory and equipment data.
+   - UIManager: Controls panel toggling and event routing.
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: cols
+      :value: 8
+
+
+
+   .. py:attribute:: rows
+      :value: 6
+
+
+
+   .. py:attribute:: cell_size
+      :value: 48
+
+
+
+   .. py:attribute:: visible
+      :value: False
+
+
+
+   .. py:attribute:: selected_index
+      :value: None
+
+
+
+   .. py:attribute:: dragging
+      :value: None
+
+
+
+   .. py:attribute:: context_menu
+      :value: None
+
+
+
+   .. py:attribute:: message
+      :value: ''
+
+
+
+   .. py:attribute:: hovered_index
+      :value: None
+
+
+
+   .. py:attribute:: hovered_equip
+      :value: None
+
+
+
+   .. py:attribute:: font
+
+
+   .. py:attribute:: equip_slot_size
+      :value: 44
+
+
+
+   .. py:attribute:: equip_slots
+      :value: ['head', 'face', 'torso', 'left arm', 'right arm', 'left hand', 'right hand', 'left palm',...
+
+
+
+   .. py:attribute:: split_prompt
+      :value: None
+
+
+
+   .. py:attribute:: bg_image
+
+
+   .. py:method:: toggle()
+
+      Toggle the visibility of the Inventory UI.
+
+
+
+   .. py:method:: handle_event(event, player, game_map)
+
+      Handle events for the Inventory UI.
+
+
+
+   .. py:method:: handle_context_action(action, idx, player, game_map)
+
+      Handle context menu actions.
+
+
+
+   .. py:method:: draw(screen)
+
+      Draw the Inventory UI panel with the graphical background and overlays.
+
+      :param screen: The display surface to draw the inventory panel on.
+      :type screen: pygame.Surface
+
+
+

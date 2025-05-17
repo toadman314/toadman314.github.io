@@ -1,0 +1,250 @@
+ui.manager
+==========
+
+.. py:module:: ui.manager
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.manager.UIManager
+
+
+Module Contents
+---------------
+
+.. py:class:: UIManager(player, event_manager, game=None, camera=None, screen=None)
+
+   Manages all UI panels and HUD for the game, including inventory, character, questlog, abilities, and dialogue.
+   Handles panel toggling, event routing, and drawing.
+
+   .. attribute:: player
+
+      The player character.
+
+      :type: Player
+
+   .. attribute:: event_manager
+
+      The event manager for handling UI events.
+
+      :type: EventManager
+
+   .. attribute:: game
+
+      The main game object.
+
+      :type: Game or None
+
+   .. attribute:: camera
+
+      The camera object for world-to-screen transforms.
+
+      :type: Camera or None
+
+   .. attribute:: screen
+
+      The main display surface.
+
+      :type: pygame.Surface or None
+
+   .. attribute:: inventory_ui
+
+      The inventory UI panel.
+
+      :type: InventoryUI
+
+   .. attribute:: character_ui
+
+      The character sheet UI panel.
+
+      :type: CharacterUI
+
+   .. attribute:: questlog_ui
+
+      The quest log UI panel.
+
+      :type: QuestLogUI
+
+   .. attribute:: abilities_ui
+
+      The abilities/perks UI panel.
+
+      :type: AbilitiesUI
+
+   .. attribute:: dialogue_ui
+
+      The dialogue UI panel.
+
+      :type: DialogueUI
+
+   .. attribute:: hud
+
+      The always-visible HUD.
+
+      :type: PlayerHUD
+
+   .. attribute:: panels
+
+      List of panel definitions for toggling and event routing.
+
+      :type: list
+
+   .. seealso::
+
+      :py:obj:`ui.inventory.InventoryUI`
+          Inventory panel.
+
+      :py:obj:`ui.character.CharacterUI`
+          Character sheet panel.
+
+      :py:obj:`ui.questlog.QuestLogUI`
+          Quest log panel.
+
+      :py:obj:`ui.abilities.AbilitiesUI`
+          Abilities/perks panel.
+
+      :py:obj:`ui.dialogue.DialogueUI`
+          Dialogue panel.
+
+      :py:obj:`ui.hud.PlayerHUD`
+          HUD bar and action buttons.
+
+      :py:obj:`core.events.EventManager`
+          Event routing.
+
+      :py:obj:`entities.player.Player`
+          Player object for all panels.
+
+   .. rubric:: References
+
+   - InventoryUI, CharacterUI, QuestLogUI, AbilitiesUI, DialogueUI: Managed panels.
+   - PlayerHUD: HUD bar and action buttons.
+   - EventManager: Event routing.
+   - Player: Source of all player data for panels.
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: event_manager
+
+
+   .. py:attribute:: game
+      :value: None
+
+
+
+   .. py:attribute:: camera
+      :value: None
+
+
+
+   .. py:attribute:: screen
+      :value: None
+
+
+
+   .. py:attribute:: inventory_ui
+
+
+   .. py:attribute:: character_ui
+
+
+   .. py:attribute:: questlog_ui
+
+
+   .. py:attribute:: abilities_ui
+
+
+   .. py:attribute:: dialogue_ui
+
+
+   .. py:attribute:: hud
+
+
+   .. py:attribute:: panels
+
+
+   .. py:method:: handle_event(event, game_map=None)
+
+      Handle a Pygame event and route it to the appropriate UI panel or HUD.
+
+      :param event: The event to handle.
+      :type event: pygame.event.Event
+      :param game_map: The game map, used for inventory events.
+      :type game_map: Map, optional
+
+
+
+   .. py:method:: draw(screen, game_map=None, camera=None, player=None)
+
+      Draw the open UI panel and HUD to the screen.
+
+      :param screen: The display surface.
+      :type screen: pygame.Surface
+      :param game_map: The game map.
+      :type game_map: Map, optional
+      :param camera: The camera object.
+      :type camera: Camera, optional
+      :param player: The player character.
+      :type player: Player, optional
+
+
+
+   .. py:method:: get_open_panel()
+
+      Return the currently open UI panel, if any.
+
+      :returns: The panel dictionary if a panel is open, else None.
+      :rtype: dict or None
+
+
+
+   .. py:method:: toggle_inventory()
+
+      Toggle the inventory panel.
+
+
+
+   .. py:method:: toggle_character()
+
+      Toggle the character panel.
+
+
+
+   .. py:method:: toggle_questlog()
+
+      Toggle the questlog panel.
+
+
+
+   .. py:method:: toggle_abilities()
+
+      Toggle the abilities panel.
+
+
+
+   .. py:method:: toggle_dialogue()
+
+      Toggle the dialogue panel.
+
+
+
+   .. py:method:: update()
+
+      Update all UI panels if needed (placeholder for future per-frame UI logic).
+
+
+
+   .. py:method:: get_phase()
+
+      Return the current game phase as a string, or None if not available.
+
+      :returns: The current game phase, or None if unavailable.
+      :rtype: str or None
+
+
+

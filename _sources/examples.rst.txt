@@ -1,0 +1,49 @@
+Examples
+========
+
+This section provides practical code examples and usage patterns for the Hajduk engine and game. Use these as a reference for common tasks and as templates for your own features.
+
+Basic Player Movement
+---------------------
+.. code-block:: python
+
+    from entities.player import Player
+    from map.map import Map
+
+    player = Player(x=5, y=5)
+    game_map = Map(width=20, height=20)
+    # Plan a path (example: right 3 tiles)
+    player.planned_path = [(6, 5), (7, 5), (8, 5)]
+    player.planned_path_costs = [1, 1, 1]
+    player.action_points = 3
+    player.confirm_move(game_map)
+    print(player.x, player.y)  # Output: 8 5
+
+NPC Turn Example
+----------------
+.. code-block:: python
+
+    from entities.npc import NPC
+    from core.game import Game
+
+    npc = NPC(x=10, y=10)
+    game = Game(screen=None)  # Use a mock or real screen as needed
+    npc.take_turn(game)
+    # NPC will chase or wander depending on player visibility
+
+Inventory Management
+--------------------
+.. code-block:: python
+
+    from entities.player import Player
+    from entities.item import Item
+
+    player = Player(x=0, y=0)
+    sword = Item(name="Sword", weight=5)
+    player.add_item(sword)
+    print(player.inventory)
+
+See Also
+--------
+- :doc:`autoapi/index` for full API reference
+- :doc:`how_to_contribute` for development guidelines

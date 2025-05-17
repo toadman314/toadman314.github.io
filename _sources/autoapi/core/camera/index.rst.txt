@@ -1,0 +1,191 @@
+core.camera
+===========
+
+.. py:module:: core.camera
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.camera.Camera
+
+
+Module Contents
+---------------
+
+.. py:class:: Camera(width, height, tile_size, zoom=1.0)
+
+   Camera for handling world-to-screen and screen-to-world coordinate transforms.
+
+   .. attribute:: width
+
+      Width of the map in tiles.
+
+      :type: int
+
+   .. attribute:: height
+
+      Height of the map in tiles.
+
+      :type: int
+
+   .. attribute:: tile_size
+
+      Size of each tile in pixels.
+
+      :type: int
+
+   .. attribute:: zoom
+
+      Current zoom level.
+
+      :type: float
+
+   .. attribute:: max_zoom
+
+      Maximum allowed zoom level.
+
+      :type: float
+
+   .. attribute:: min_zoom
+
+      Minimum allowed zoom level.
+
+      :type: float
+
+   .. attribute:: target
+
+      The entity the camera follows (usually the player).
+
+      :type: Entity or None
+
+   .. attribute:: cam_px
+
+      Camera center X in pixels.
+
+      :type: float
+
+   .. attribute:: cam_py
+
+      Camera center Y in pixels.
+
+      :type: float
+
+   .. attribute:: smooth_factor
+
+      Smoothing factor for camera movement.
+
+      :type: float
+
+
+   .. py:attribute:: width
+
+
+   .. py:attribute:: height
+
+
+   .. py:attribute:: tile_size
+
+
+   .. py:attribute:: zoom
+      :value: 1.0
+
+
+
+   .. py:attribute:: max_zoom
+      :value: 2.0
+
+
+
+   .. py:attribute:: min_zoom
+      :value: 1.0
+
+
+
+   .. py:attribute:: target
+      :value: None
+
+
+
+   .. py:attribute:: cam_px
+      :value: 0.0
+
+
+
+   .. py:attribute:: cam_py
+      :value: 0.0
+
+
+
+   .. py:attribute:: smooth_factor
+      :value: 1.0
+
+
+
+   .. py:method:: set_target(entity)
+
+      Set the camera's target entity and center on it.
+
+      :param entity: The entity to follow.
+      :type entity: Entity
+
+
+
+   .. py:method:: update(screen_width, screen_height)
+
+      Update the camera position to follow the target entity.
+
+      :param screen_width: Width of the screen in pixels.
+      :type screen_width: int
+      :param screen_height: Height of the screen in pixels.
+      :type screen_height: int
+
+
+
+   .. py:method:: world_to_screen(x, y, screen_width, screen_height)
+
+      Convert world (map) coordinates to screen (pixel) coordinates.
+
+      :param x: World X coordinate (tile index).
+      :type x: int
+      :param y: World Y coordinate (tile index).
+      :type y: int
+      :param screen_width: Width of the screen in pixels.
+      :type screen_width: int
+      :param screen_height: Height of the screen in pixels.
+      :type screen_height: int
+
+      :returns: (screen_x, screen_y) in pixels.
+      :rtype: tuple
+
+
+
+   .. py:method:: apply_zoom(delta)
+
+      Adjust the camera zoom level.
+
+      :param delta: Amount to change the zoom by.
+      :type delta: float
+
+
+
+   .. py:method:: screen_to_world(sx, sy, screen_width, screen_height)
+
+      Converts screen (pixel) coordinates to world (map) coordinates, accounting for camera position and zoom.
+
+      :param sx: Screen X coordinate (pixels).
+      :type sx: int
+      :param sy: Screen Y coordinate (pixels).
+      :type sy: int
+      :param screen_width: Width of the screen in pixels.
+      :type screen_width: int
+      :param screen_height: Height of the screen in pixels.
+      :type screen_height: int
+
+      :returns: (wx, wy) world coordinates in pixels (float).
+      :rtype: tuple
+
+
+

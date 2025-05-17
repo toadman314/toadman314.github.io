@@ -1,0 +1,66 @@
+core.events
+===========
+
+.. py:module:: core.events
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.events.EventManager
+
+
+Module Contents
+---------------
+
+.. py:class:: EventManager
+
+   Simple event manager for subscribing, posting, and processing events.
+
+   .. attribute:: listeners
+
+      Dictionary mapping event types to lists of callback functions.
+
+      :type: dict
+
+
+   .. py:attribute:: listeners
+
+
+   .. py:method:: subscribe(event_type, callback)
+
+      Subscribe a callback to an event type.
+
+      :param event_type: The event class/type to subscribe to.
+      :type event_type: type
+      :param callback: The function to call when the event is posted.
+      :type callback: callable
+
+
+
+   .. py:method:: post_immediate(event)
+
+      Immediately notify all listeners of an event.
+
+      :param event: The event instance to post.
+      :type event: object
+
+
+
+   .. py:method:: post_queued(event)
+
+      Queue an event for later processing.
+
+      :param event: The event instance to queue.
+      :type event: object
+
+
+
+   .. py:method:: process_queue()
+
+      Process all queued events.
+
+
+

@@ -1,0 +1,173 @@
+entities.item
+=============
+
+.. py:module:: entities.item
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.item.Item
+   entities.item.InventorySlot
+   entities.item.Consumable
+   entities.item.Weapon
+   entities.item.HeadCover
+   entities.item.SolidConsumable
+
+
+Module Contents
+---------------
+
+.. py:class:: Item(name, item_type='misc', icon=None, stackable=False, max_stack=1, slot_type=None)
+
+   Base class for all items.
+
+   .. attribute:: name
+
+      The name of the item.
+
+      :type: str
+
+   .. attribute:: item_type
+
+      The type/category of the item.
+
+      :type: str
+
+   .. attribute:: icon
+
+      The icon or sprite for the item (optional).
+
+      :type: Any
+
+   .. attribute:: stackable
+
+      Whether the item can be stacked.
+
+      :type: bool
+
+   .. attribute:: max_stack
+
+      Maximum stack size for this item.
+
+      :type: int
+
+   .. attribute:: slot_type
+
+      Equipment slot this item can be equipped to, if any.
+
+      :type: str or None
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: item_type
+      :value: 'misc'
+
+
+
+   .. py:attribute:: icon
+      :value: None
+
+
+
+   .. py:attribute:: stackable
+      :value: False
+
+
+
+   .. py:attribute:: max_stack
+      :value: 1
+
+
+
+   .. py:attribute:: slot_type
+      :value: None
+
+
+
+   .. py:method:: get_context_actions()
+
+      Returns a list of context menu actions available for this item.
+
+      :returns: List of action names as strings.
+      :rtype: list
+
+
+
+.. py:class:: InventorySlot(item, count=1)
+
+   Represents a slot in the inventory, holding an item and its count (for stacking).
+
+   .. attribute:: item
+
+      The item in this slot.
+
+      :type: Item
+
+   .. attribute:: count
+
+      The number of items in the stack.
+
+      :type: int
+
+
+   .. py:attribute:: item
+
+
+   .. py:attribute:: count
+
+
+.. py:class:: Consumable(name, icon=None, max_stack=10)
+
+   Bases: :py:obj:`Item`
+
+
+   Represents a consumable item (e.g., potion, food).
+
+
+   .. py:method:: get_context_actions()
+
+      Returns context actions, including 'Consume'.
+
+      :returns: List of action names as strings.
+      :rtype: list
+
+
+
+.. py:class:: Weapon(name, icon=None, slot_type='right hand')
+
+   Bases: :py:obj:`Item`
+
+
+   Represents a weapon item.
+
+
+   .. py:method:: get_context_actions()
+
+      Returns context actions for a weapon.
+
+      :returns: List of action names as strings.
+      :rtype: list
+
+
+
+.. py:class:: HeadCover(name, icon=None)
+
+   Bases: :py:obj:`Item`
+
+
+   Represents a head-covering equipment item.
+
+
+.. py:class:: SolidConsumable(name, icon=None, max_stack=10)
+
+   Bases: :py:obj:`Item`
+
+
+   Represents a solid consumable item (e.g., bread, ration).
+
+

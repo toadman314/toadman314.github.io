@@ -1,0 +1,606 @@
+entities.player
+===============
+
+.. py:module:: entities.player
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   entities.player.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.player.Player
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: Player(x, y)
+
+   Bases: :py:obj:`entities.base.Entity`
+
+
+   Represents the player character, including inventory, equipment, all stat categories, and active effects.
+
+   .. attribute:: inventory
+
+      List of InventorySlot objects representing the player's inventory.
+
+      :type: list
+
+   .. attribute:: equipment
+
+      Dictionary of equipped items by slot.
+
+      :type: dict
+
+   .. attribute:: sprite
+
+      The player's sprite image.
+
+      :type: pygame.Surface
+
+   .. attribute:: planned_path
+
+      List of (x, y) tuples representing the planned movement path.
+
+      :type: list
+
+   .. attribute:: planned_path_costs
+
+      List of movement costs for each step in the planned path.
+
+      :type: list
+
+   .. attribute:: effects
+
+      Manages all stat modifiers and effects on the player.
+
+      :type: EffectManager
+
+   .. seealso::
+
+      :py:obj:`ui.inventory.InventoryUI`
+          Inventory panel for this player.
+
+      :py:obj:`ui.character.CharacterUI`
+          Character sheet panel for this player.
+
+      :py:obj:`ui.questlog.QuestLogUI`
+          Quest log panel for this player.
+
+      :py:obj:`ui.abilities.AbilitiesUI`
+          Abilities/perks panel for this player.
+
+      :py:obj:`systems.quest.QuestSystem`
+          Tracks and updates player quests.
+
+      :py:obj:`core.state.GameState`
+          Stores player data in game state.
+
+      :py:obj:`systems.effects.EffectManager`
+          Handles all stat modifications.
+
+      :py:obj:`systems.effects.Effect`
+          Represents a single stat modifier.
+
+   .. rubric:: References
+
+   - InventoryUI, CharacterUI, QuestLogUI, AbilitiesUI: UI panels displaying player data.
+   - QuestSystem: Tracks and updates player quests.
+   - GameState: Stores and loads player data.
+
+
+   .. py:attribute:: color
+      :value: (80, 200, 120)
+
+
+
+   .. py:attribute:: inventory
+      :value: []
+
+
+
+   .. py:attribute:: equipment
+
+
+   .. py:attribute:: sprite
+
+
+   .. py:attribute:: health_condition
+      :value: 'Healthy'
+
+
+
+   .. py:attribute:: money
+      :value: 0
+
+
+
+   .. py:attribute:: weight
+      :value: 0
+
+
+
+   .. py:attribute:: weight_limit
+      :value: 100
+
+
+
+   .. py:attribute:: planned_path
+      :value: []
+
+
+
+   .. py:attribute:: planned_path_costs
+      :value: []
+
+
+
+   .. py:attribute:: effects
+
+
+   .. py:property:: action_points
+
+      The current action points available to the player.
+
+      :type: int
+
+
+   .. py:property:: max_action_points
+
+      The maximum action points the player can have.
+
+      :type: int
+
+
+   .. py:property:: health_threshold
+
+      The player's health threshold.
+
+      :type: int
+
+
+   .. py:property:: blood_threshold
+
+      The player's blood threshold.
+
+      :type: int
+
+
+   .. py:property:: stamina_threshold
+
+      The player's stamina threshold.
+
+      :type: int
+
+
+   .. py:property:: carry_limit
+
+      The player's carry limit.
+
+      :type: int
+
+
+   .. py:property:: combat_mobility
+
+      The player's combat mobility.
+
+      :type: int
+
+
+   .. py:property:: combat_speed
+
+      The player's combat speed.
+
+      :type: int
+
+
+   .. py:property:: damage_resistance
+
+      The player's damage resistance (percentage as a fraction, e.g., 0.75 for 75%).
+
+      :type: float
+
+
+   .. py:property:: blunt_resistance
+
+      The player's blunt damage resistance (percentage as a fraction).
+
+      :type: float
+
+
+   .. py:property:: sharp_resistance
+
+      The player's sharp damage resistance (percentage as a fraction).
+
+      :type: float
+
+
+   .. py:property:: blocking_chance
+
+      The player's chance to block an attack (percentage as a fraction).
+
+      :type: float
+
+
+   .. py:property:: attack_damage
+
+      The base damage dealt by the player's attacks.
+
+      :type: int
+
+
+   .. py:property:: close_hit_chance
+
+      The chance to hit a target with close-range attacks (percentage as a fraction).
+
+      :type: float
+
+
+   .. py:property:: far_hit_chance
+
+      The chance to hit a target with far-range attacks (percentage as a fraction).
+
+      :type: float
+
+
+   .. py:property:: combat_vision
+
+      The range of the player's combat vision.
+
+      :type: int
+
+
+   .. py:property:: observance
+
+      The player's observance, affecting detection of hidden objects or enemies.
+
+      :type: int
+
+
+   .. py:property:: inconspicuousness
+
+      The player's inconspicuousness, affecting stealth and hiding.
+
+      :type: int
+
+
+   .. py:property:: notoriety
+
+      The player's notoriety, affecting how NPCs react to them.
+
+      :type: int
+
+
+   .. py:property:: sleep_need
+
+      The player's need for sleep, affecting energy recovery.
+
+      :type: int
+
+
+   .. py:property:: food_need
+
+      The player's need for food, affecting health and stamina.
+
+      :type: int
+
+
+   .. py:property:: drink_need
+
+      The player's need for drink, affecting health and stamina.
+
+      :type: int
+
+
+   .. py:property:: sobriety
+
+      The player's sobriety, affecting health and stamina recovery.
+
+      :type: int
+
+
+   .. py:property:: strength_stat
+
+      The player's strength stat (innate).
+
+      :type: int
+
+
+   .. py:property:: agility_stat
+
+      The player's agility stat (innate).
+
+      :type: int
+
+
+   .. py:property:: dexterity_stat
+
+      The player's dexterity stat (innate).
+
+      :type: int
+
+
+   .. py:property:: intelligence_stat
+
+      The player's intelligence stat (innate).
+
+      :type: int
+
+
+   .. py:property:: charisma_stat
+
+      The player's charisma stat (innate).
+
+      :type: int
+
+
+   .. py:property:: prowess
+
+      The player's prowess (learned stat).
+
+      :type: int
+
+
+   .. py:property:: acrobatics
+
+      The player's acrobatics (learned stat).
+
+      :type: int
+
+
+   .. py:property:: speaking
+
+      The player's speaking (learned stat).
+
+      :type: int
+
+
+   .. py:property:: acumen
+
+      The player's acumen (learned stat).
+
+      :type: int
+
+
+   .. py:property:: onehand_wielding
+
+      The player's one-hand wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: twohand_wielding
+
+      The player's two-hand wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: pole_wielding
+
+      The player's pole weapon wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: offhand_wielding
+
+      The player's off-hand wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: bow_wielding
+
+      The player's bow wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: crossbow_wielding
+
+      The player's crossbow wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: handcannon_wielding
+
+      The player's handcannon wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: armor_wielding
+
+      The player's armor wielding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: horse_riding
+
+      The player's horse riding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: cart_riding
+
+      The player's cart riding (learned stat).
+
+      :type: int
+
+
+   .. py:property:: medical_knowledge
+
+      The player's medical knowledge (learned stat).
+
+      :type: int
+
+
+   .. py:property:: engineering_knowledge
+
+      The player's engineering knowledge (learned stat).
+
+      :type: int
+
+
+   .. py:property:: crafting_knowledge
+
+      The player's crafting knowledge (learned stat).
+
+      :type: int
+
+
+   .. py:property:: survival_knowledge
+
+      The player's survival knowledge (learned stat).
+
+      :type: int
+
+
+   .. py:property:: basic_stats
+
+      Dictionary of all basic stats.
+
+      :type: dict
+
+
+   .. py:property:: innate_stats
+
+      Dictionary of all innate stats.
+
+      :type: dict
+
+
+   .. py:property:: learned_stats
+
+      Dictionary of all learned stats.
+
+      :type: dict
+
+
+   .. py:method:: refill_action_points()
+
+      Refill the player's action points to the maximum value.
+
+
+
+   .. py:method:: choose_interaction(target, encounter_type)
+
+      Determines which interaction to use based on the encounter type.
+
+      :param target: The target entity or item.
+      :type target: object
+      :param encounter_type: The type of encounter ("entity", "item", or "object").
+      :type encounter_type: str
+
+      :returns: The chosen interaction object, or None if no valid interaction.
+      :rtype: object or None
+
+
+
+   .. py:method:: add_item(item, count=1)
+
+      Adds an item (with optional count) to the inventory, handling stacking.
+
+      :param item: The item to add.
+      :type item: Item
+      :param count: The number of items to add (default is 1).
+      :type count: int, optional
+
+
+
+   .. py:method:: remove_item(slot_index, count=1)
+
+      Removes a specified count of items from a given inventory slot.
+
+      :param slot_index: The index of the inventory slot.
+      :type slot_index: int
+      :param count: The number of items to remove (default is 1).
+      :type count: int, optional
+
+
+
+   .. py:method:: drop_item(slot, game_map)
+
+      Drops an item from the inventory onto the map at the player's position.
+
+      :param slot: The inventory slot containing the item to drop.
+      :type slot: InventorySlot
+      :param game_map: The game map instance, used to determine drop position.
+      :type game_map: GameMap
+
+
+
+   .. py:method:: use_item(slot)
+
+      Uses an item from the inventory.
+
+      :param slot: The inventory slot containing the item to use.
+      :type slot: InventorySlot
+
+
+
+   .. py:method:: equip_item(slot_index)
+
+      Equips an item from the inventory to the appropriate equipment slot.
+      Swaps out any currently equipped item.
+
+      :param slot_index: The index of the inventory slot containing the item to equip.
+      :type slot_index: int
+
+
+
+   .. py:method:: draw(screen, camera)
+
+      Draw the entity as a rectangle or sprite on the screen.
+
+      :param screen: The display surface to draw on.
+      :type screen: pygame.Surface
+      :param camera: The camera for coordinate transforms.
+      :type camera: Camera
+
+
+
+   .. py:method:: confirm_move(game_map)
+
+      Move along the planned path, consuming action points (cost 1 for orthogonal, 1.5 for diagonal).
+
+      :param game_map: The game map instance, used to check passability of tiles.
+      :type game_map: GameMap
+
+      :returns: The number of steps successfully moved.
+      :rtype: int
+
+
+
+   .. py:method:: get_modified_stat(stat_name, base_value, context=None)
+
+      Get the stat value after applying all active effects.
+
+      :param stat_name: The name of the stat to query.
+      :type stat_name: str
+      :param base_value: The base value of the stat.
+      :type base_value: float
+      :param context: Context for conditioned/contextual effects.
+      :type context: dict, optional
+
+      :returns: The modified stat value.
+      :rtype: float
+
+
+

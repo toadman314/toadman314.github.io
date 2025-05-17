@@ -1,0 +1,237 @@
+core.game
+=========
+
+.. py:module:: core.game
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.game.Game
+
+
+Module Contents
+---------------
+
+.. py:class:: Game(screen)
+
+   Main game controller for Hajduk RPG.
+
+   Handles game state, event loop, rendering, and core systems such as combat, quests, and dialogue.
+
+   .. attribute:: screen
+
+      The main display surface for rendering the game.
+
+      :type: pygame.Surface
+
+   .. attribute:: clock
+
+      The game clock for managing frame rate.
+
+      :type: pygame.time.Clock
+
+   .. attribute:: running
+
+      Whether the game loop is running.
+
+      :type: bool
+
+   .. attribute:: state
+
+      The current game state, including map and entities.
+
+      :type: GameState
+
+   .. attribute:: events
+
+      The event manager for posting and processing events.
+
+      :type: EventManager
+
+   .. attribute:: camera
+
+      The camera object for world-to-screen transforms.
+
+      :type: Camera
+
+   .. attribute:: ui_manager
+
+      The UI manager for HUD and panels.
+
+      :type: UIManager
+
+   .. attribute:: phase
+
+      The current game phase (e.g., 'PLAYER_TURN', 'NPC_TURN').
+
+      :type: str
+
+   .. attribute:: combat_system
+
+      The combat system instance.
+
+      :type: CombatSystem
+
+   .. attribute:: quest_system
+
+      The quest system instance.
+
+      :type: QuestSystem
+
+   .. attribute:: dialogue_system
+
+      The dialogue system instance.
+
+      :type: DialogueSystem
+
+   .. attribute:: selected_tile
+
+      The currently selected map tile (x, y) or None.
+
+      :type: tuple or None
+
+   .. attribute:: current_path
+
+      The current planned path for the player (list of (x, y)).
+
+      :type: list
+
+   .. attribute:: current_path_costs
+
+      The action point costs for each step in the current path.
+
+      :type: list
+
+   .. attribute:: move_confirmed
+
+      Whether the player's move has been confirmed.
+
+      :type: bool
+
+
+   .. py:attribute:: screen
+
+
+   .. py:attribute:: clock
+
+
+   .. py:attribute:: running
+      :value: True
+
+
+
+   .. py:attribute:: state
+
+
+   .. py:attribute:: events
+
+
+   .. py:attribute:: camera
+
+
+   .. py:attribute:: ui_manager
+
+
+   .. py:attribute:: phase
+      :value: 'PLAYER_TURN'
+
+
+
+   .. py:attribute:: combat_system
+
+
+   .. py:attribute:: quest_system
+
+
+   .. py:attribute:: dialogue_system
+
+
+   .. py:attribute:: selected_tile
+      :value: None
+
+
+
+   .. py:attribute:: current_path
+      :value: []
+
+
+
+   .. py:attribute:: current_path_costs
+      :value: []
+
+
+
+   .. py:attribute:: move_confirmed
+      :value: False
+
+
+
+   .. py:method:: run()
+
+      Main game loop. Handles updating, event processing, and rendering.
+
+
+
+   .. py:method:: handle_events()
+
+      Process all Pygame events, including UI and map interactions.
+
+
+
+   .. py:method:: update()
+
+      Update the game state for the current phase (player, NPC, animal turns, etc.).
+
+
+
+   .. py:method:: check_encounters(initiator)
+
+      Check for and resolve encounters between entities or with map objects.
+
+      :param initiator: The entity whose turn is being processed.
+      :type initiator: Entity
+
+
+
+   .. py:method:: is_position_free(x, y, ignore_entity=None)
+
+      Check if a map position is free of obstacles and entities.
+
+      :param x: X coordinate (tile index).
+      :type x: int
+      :param y: Y coordinate (tile index).
+      :type y: int
+      :param ignore_entity: An entity to ignore in the check (e.g., the moving entity itself).
+      :type ignore_entity: Entity, optional
+
+      :returns: True if the position is free, False otherwise.
+      :rtype: bool
+
+
+
+   .. py:method:: render()
+
+      Render the game map, entities, UI, and overlays to the screen.
+
+
+
+   .. py:method:: check_item_encounter()
+
+      Check if the player is on an item and handle item pickup encounters.
+
+
+
+   .. py:method:: handle_map_click(mx, my)
+
+      Handle mouse clicks on the map, calculate pathfinding, and update player path.
+
+      :param mx: Mouse X coordinate (pixels).
+      :type mx: int
+      :param my: Mouse Y coordinate (pixels).
+      :type my: int
+
+
+

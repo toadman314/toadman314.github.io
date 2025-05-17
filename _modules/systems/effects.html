@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>systems.effects &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for systems.effects</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">systems.effects</span>
+<span class="sd">================</span>
+
+<span class="sd">Effect system for managing stat modifiers and consequences from items, actions, states, and encounters.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">- Effect: Represents a single stat modifier.</span>
+<span class="sd">- EffectType: Enum for effect duration/type.</span>
+<span class="sd">- EffectManager: Manages all effects on an entity (e.g., Player).</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">- entities.player.Player: Integrates EffectManager for stat calculation.</span>
+<span class="sd">- systems.quest.QuestSystem: May trigger effects as quest rewards or penalties.</span>
+<span class="sd">- core.encounter: Encounters may apply effects.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">- InventoryUI, CharacterUI: Display effects and modified stats.</span>
+<span class="sd">- GameState: Stores active effects for save/load.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<div class="viewcode-block" id="EffectType">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EffectType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for different effect durations/types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EffectType.PERMANENT">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectType.PERMANENT">[docs]</a>
+    <span class="n">PERMANENT</span> <span class="o">=</span> <span class="s2">&quot;permanent&quot;</span></div>
+
+<div class="viewcode-block" id="EffectType.CONDITIONED">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectType.CONDITIONED">[docs]</a>
+    <span class="n">CONDITIONED</span> <span class="o">=</span> <span class="s2">&quot;conditioned&quot;</span></div>
+
+<div class="viewcode-block" id="EffectType.TEMPORARY">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectType.TEMPORARY">[docs]</a>
+    <span class="n">TEMPORARY</span> <span class="o">=</span> <span class="s2">&quot;temporary&quot;</span></div>
+
+<div class="viewcode-block" id="EffectType.CONTEXTUAL">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectType.CONTEXTUAL">[docs]</a>
+    <span class="n">CONTEXTUAL</span> <span class="o">=</span> <span class="s2">&quot;contextual&quot;</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Effect">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Effect</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a stat modifier effect.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stat : str</span>
+<span class="sd">        The name of the stat to modify (e.g., &#39;strength&#39;).</span>
+<span class="sd">    value : float</span>
+<span class="sd">        The value to add (or multiply, if mode is &#39;mul&#39;).</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        &#39;add&#39; for additive, &#39;mul&#39; for multiplicative (default &#39;add&#39;).</span>
+<span class="sd">    effect_type : EffectType</span>
+<span class="sd">        The type/duration of the effect.</span>
+<span class="sd">    source : Any, optional</span>
+<span class="sd">        The source of the effect (item, skill, etc.).</span>
+<span class="sd">    duration : int, optional</span>
+<span class="sd">        Number of turns for temporary effects.</span>
+<span class="sd">    condition : Callable, optional</span>
+<span class="sd">        Function to check if the effect is active (for conditioned/contextual).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">effect_type</span><span class="p">:</span> <span class="n">EffectType</span> <span class="o">=</span> <span class="n">EffectType</span><span class="o">.</span><span class="n">PERMANENT</span><span class="p">,</span>
+                 <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Effect.stat">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.stat">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stat</span> <span class="o">=</span> <span class="n">stat</span></div>
+
+<div class="viewcode-block" id="Effect.value">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.value">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Effect.mode">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.mode">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span></div>
+
+<div class="viewcode-block" id="Effect.effect_type">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.effect_type">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">effect_type</span> <span class="o">=</span> <span class="n">effect_type</span></div>
+
+<div class="viewcode-block" id="Effect.source">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.source">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span></div>
+
+<div class="viewcode-block" id="Effect.duration">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.duration">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span></div>
+
+<div class="viewcode-block" id="Effect.condition">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.condition">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span></div>
+
+<div class="viewcode-block" id="Effect.active">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.active">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Used for contextual/conditioned</span></div>
+
+
+<div class="viewcode-block" id="Effect.is_active">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.Effect.is_active">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the effect is currently active.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        context : dict, optional</span>
+<span class="sd">            Context for evaluating conditions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the effect is active.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_type</span> <span class="o">==</span> <span class="n">EffectType</span><span class="o">.</span><span class="n">PERMANENT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_type</span> <span class="o">==</span> <span class="n">EffectType</span><span class="o">.</span><span class="n">TEMPORARY</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">EffectType</span><span class="o">.</span><span class="n">CONDITIONED</span><span class="p">,</span> <span class="n">EffectType</span><span class="o">.</span><span class="n">CONTEXTUAL</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+
+<div class="viewcode-block" id="EffectManager">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EffectManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages all effects for an entity (e.g., Player).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effects : list of Effect</span>
+<span class="sd">        All effects currently applied to the entity.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    add_effect(effect):</span>
+<span class="sd">        Add an effect.</span>
+<span class="sd">    remove_effect(effect):</span>
+<span class="sd">        Remove an effect.</span>
+<span class="sd">    update():</span>
+<span class="sd">        Update all effects (e.g., decrement durations).</span>
+<span class="sd">    get_stat_modifiers(stat, context=None):</span>
+<span class="sd">        Get all modifiers for a given stat.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EffectManager.effects">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.effects">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Effect</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="EffectManager.add_effect">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.add_effect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_effect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effect</span><span class="p">:</span> <span class="n">Effect</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">effect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EffectManager.remove_effect">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.remove_effect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_effect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effect</span><span class="p">:</span> <span class="n">Effect</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">effect</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">effect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EffectManager.update">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update all effects (decrement durations, remove expired).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="p">[:]:</span>
+            <span class="k">if</span> <span class="n">effect</span><span class="o">.</span><span class="n">effect_type</span> <span class="o">==</span> <span class="n">EffectType</span><span class="o">.</span><span class="n">TEMPORARY</span> <span class="ow">and</span> <span class="n">effect</span><span class="o">.</span><span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">effect</span><span class="o">.</span><span class="n">duration</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">effect</span><span class="o">.</span><span class="n">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">effect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EffectManager.get_stat_modifiers">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.get_stat_modifiers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stat_modifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Effect</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all active effects for a given stat.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">stat</span> <span class="o">==</span> <span class="n">stat</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">is_active</span><span class="p">(</span><span class="n">context</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="EffectManager.get_modified_stat">
+<a class="viewcode-back" href="../../autoapi/systems/effects/index.html#systems.effects.EffectManager.get_modified_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modified_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the modified stat value after applying all effects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">base_value</span>
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stat_modifiers</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">effect</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;add&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">+=</span> <span class="n">effect</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">elif</span> <span class="n">effect</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;mul&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">*=</span> <span class="n">effect</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

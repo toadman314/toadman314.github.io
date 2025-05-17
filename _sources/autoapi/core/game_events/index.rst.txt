@@ -1,0 +1,163 @@
+core.game_events
+================
+
+.. py:module:: core.game_events
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.game_events.ItemPickedUpEvent
+   core.game_events.ItemEquippedEvent
+   core.game_events.ItemUnequippedEvent
+   core.game_events.StackChangedEvent
+   core.game_events.InventoryFullEvent
+
+
+Module Contents
+---------------
+
+.. py:class:: ItemPickedUpEvent(player, item)
+
+   Event triggered when a player picks up an item.
+
+   .. attribute:: player
+
+      The player who picked up the item.
+
+      :type: Player
+
+   .. attribute:: item
+
+      The item that was picked up.
+
+      :type: Item
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: item
+
+
+.. py:class:: ItemEquippedEvent(player, item, slot)
+
+   Event triggered when a player equips an item.
+
+   .. attribute:: player
+
+      The player who equipped the item.
+
+      :type: Player
+
+   .. attribute:: item
+
+      The item that was equipped.
+
+      :type: Item
+
+   .. attribute:: slot
+
+      The equipment slot.
+
+      :type: str
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: item
+
+
+   .. py:attribute:: slot
+
+
+.. py:class:: ItemUnequippedEvent(player, item, slot)
+
+   Event triggered when a player unequips an item.
+
+   .. attribute:: player
+
+      The player who unequipped the item.
+
+      :type: Player
+
+   .. attribute:: item
+
+      The item that was unequipped.
+
+      :type: Item
+
+   .. attribute:: slot
+
+      The equipment slot.
+
+      :type: str
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: item
+
+
+   .. py:attribute:: slot
+
+
+.. py:class:: StackChangedEvent(player, item, new_count)
+
+   Event triggered when the stack count of an item changes.
+
+   .. attribute:: player
+
+      The player whose item stack changed.
+
+      :type: Player
+
+   .. attribute:: item
+
+      The item whose stack changed.
+
+      :type: Item
+
+   .. attribute:: new_count
+
+      The new stack count.
+
+      :type: int
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: item
+
+
+   .. py:attribute:: new_count
+
+
+.. py:class:: InventoryFullEvent(player, item)
+
+   Event triggered when the player's inventory is full and an item cannot be added.
+
+   .. attribute:: player
+
+      The player whose inventory is full.
+
+      :type: Player
+
+   .. attribute:: item
+
+      The item that could not be added.
+
+      :type: Item
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: item
+
+

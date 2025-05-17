@@ -1,0 +1,244 @@
+map.map
+=======
+
+.. py:module:: map.map
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   map.map.Map
+
+
+Module Contents
+---------------
+
+.. py:class:: Map
+
+   Represents the game map, including tiles, layers, obstacles, and items.
+   Handles loading from TMX files and tilesets, and provides map logic.
+
+   .. attribute:: name
+
+      Name of the map.
+
+      :type: str
+
+   .. attribute:: tilewidth
+
+      Width of a tile in pixels.
+
+      :type: int
+
+   .. attribute:: tileheight
+
+      Height of a tile in pixels.
+
+      :type: int
+
+   .. attribute:: tileset
+
+      List of tile images.
+
+      :type: list
+
+   .. attribute:: layers
+
+      List of map layers (2D arrays of tile IDs).
+
+      :type: list
+
+   .. attribute:: layer_names
+
+      Names of the map layers.
+
+      :type: list
+
+   .. attribute:: width
+
+      Width of the map in tiles.
+
+      :type: int
+
+   .. attribute:: height
+
+      Height of the map in tiles.
+
+      :type: int
+
+   .. attribute:: tile_properties
+
+      Mapping of tile IDs to property dictionaries.
+
+      :type: dict
+
+   .. attribute:: obstacles
+
+      Set of (x, y) tuples representing obstacles.
+
+      :type: set
+
+   .. attribute:: items
+
+      Mapping of (x, y) positions to Item instances.
+
+      :type: dict
+
+   .. attribute:: property_handlers
+
+      Mapping of property names to handler functions.
+
+      :type: dict
+
+   .. attribute:: trigger_handlers
+
+      Mapping of trigger names to handler functions.
+
+      :type: dict
+
+
+   .. py:attribute:: name
+      :value: 'Main Map'
+
+
+
+   .. py:attribute:: tilewidth
+      :value: 32
+
+
+
+   .. py:attribute:: tileheight
+      :value: 32
+
+
+
+   .. py:attribute:: tileset
+      :value: []
+
+
+
+   .. py:attribute:: layers
+      :value: []
+
+
+
+   .. py:attribute:: layer_names
+      :value: []
+
+
+
+   .. py:attribute:: width
+      :value: 0
+
+
+
+   .. py:attribute:: height
+      :value: 0
+
+
+
+   .. py:attribute:: tile_properties
+
+
+   .. py:attribute:: obstacles
+
+
+   .. py:attribute:: items
+
+
+   .. py:attribute:: property_handlers
+
+
+   .. py:attribute:: trigger_handlers
+
+
+   .. py:method:: load_tmx(tmx_path)
+
+      Load map data from a TMX file.
+
+      :param tmx_path: Path to the TMX map file.
+      :type tmx_path: str
+
+
+
+   .. py:method:: parse_tileset_properties(tsx_path)
+
+
+   .. py:method:: parse_tileset_properties_inline(tileset_elem)
+
+
+   .. py:method:: load_tileset(tileset_path)
+
+
+   .. py:method:: automate_obstacles()
+
+      Modular automation for obstacle detection based on tile properties and layer names.
+
+
+
+   .. py:method:: update()
+
+
+   .. py:method:: draw(screen, camera)
+
+
+   .. py:method:: get_top_tile(x, y)
+
+      Returns the tile_id of the top-most tile at (x, y), or 0 if none.
+
+
+
+   .. py:method:: is_passable(x, y)
+
+      Returns True if the top-most tile at (x, y) allows movement.
+
+
+
+   .. py:method:: is_obstacle(x, y)
+
+      Returns True if the tile at (x, y) is not passable.
+
+
+
+   .. py:method:: get_movement_cost(x, y)
+
+      Returns the movement cost for the top-most tile at (x, y).
+      Defaults to 1 if not specified.
+
+
+
+   .. py:method:: register_property_handler(property_name, handler)
+
+      Register a function to handle a specific tile property.
+
+
+
+   .. py:method:: handle_tile_properties(x, y, context=None)
+
+      Call all registered property handlers for the top-most tile at (x, y).
+
+
+
+   .. py:method:: register_trigger_handler(trigger_name, handler)
+
+      Register a function to handle a specific trigger.
+
+
+
+   .. py:method:: fire_triggers(x, y, context=None)
+
+      Call all trigger handlers for the top-most tile at (x, y).
+
+
+
+   .. py:method:: on_player_step(x, y, player)
+
+      Call this when the player steps on a tile.
+
+
+
+   .. py:method:: draw_path_preview(screen, camera, path, step_costs, ap)
+
+

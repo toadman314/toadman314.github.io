@@ -1,0 +1,48 @@
+systems.combat
+==============
+
+.. py:module:: systems.combat
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   systems.combat.CombatSystem
+
+
+Module Contents
+---------------
+
+.. py:class:: CombatSystem(game)
+
+   Handles all combat logic, including turn order, attack resolution, and outcomes.
+
+   .. attribute:: game
+
+      Reference to the main game object.
+
+      :type: Game
+
+
+   .. py:attribute:: game
+
+
+   .. py:method:: start_combat(attacker, defender)
+
+      Start a combat encounter between two entities.
+
+      :param attacker: The attacking entity.
+      :type attacker: Entity
+      :param defender: The defending entity.
+      :type defender: Entity
+
+
+
+   .. py:method:: resolve_turn()
+
+      Resolve a single turn of combat.
+
+
+

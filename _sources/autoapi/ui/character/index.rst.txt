@@ -1,0 +1,88 @@
+ui.character
+============
+
+.. py:module:: ui.character
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.character.CharacterUI
+
+
+Module Contents
+---------------
+
+.. py:class:: CharacterUI(player)
+
+   UI for displaying the player's character sheet, including effects-modified stats.
+
+   .. attribute:: player
+
+      The player whose character sheet is displayed.
+
+      :type: Player
+
+   .. attribute:: visible
+
+      Whether the character UI is visible.
+
+      :type: bool
+
+   .. attribute:: font
+
+      Font used for character sheet text.
+
+      :type: pygame.font.Font
+
+   .. seealso::
+
+      :py:obj:`entities.player.Player`
+          Player object whose stats are shown.
+
+      :py:obj:`ui.manager.UIManager`
+          Manages all UI panels, including this one.
+
+      :py:obj:`systems.effects.EffectManager`
+          Used by Player to modify stats.
+
+   .. rubric:: References
+
+   - Player: Provides stat data for display.
+   - UIManager: Controls panel toggling and event routing.
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: visible
+      :value: False
+
+
+
+   .. py:attribute:: font
+
+
+   .. py:attribute:: bg_image
+
+
+   .. py:method:: toggle()
+
+      Toggle the visibility of the Character UI.
+
+
+
+   .. py:method:: handle_event(event)
+
+      Handle events for the Character UI.
+
+
+
+   .. py:method:: draw(screen)
+
+      Draw the Character UI panel with the graphical background and player stats.
+
+
+

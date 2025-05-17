@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>map.map &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for map.map</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<div class="viewcode-block" id="Map">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Map</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the game map, including tiles, layers, obstacles, and items.</span>
+<span class="sd">    Handles loading from TMX files and tilesets, and provides map logic.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the map.</span>
+<span class="sd">    tilewidth : int</span>
+<span class="sd">        Width of a tile in pixels.</span>
+<span class="sd">    tileheight : int</span>
+<span class="sd">        Height of a tile in pixels.</span>
+<span class="sd">    tileset : list</span>
+<span class="sd">        List of tile images.</span>
+<span class="sd">    layers : list</span>
+<span class="sd">        List of map layers (2D arrays of tile IDs).</span>
+<span class="sd">    layer_names : list</span>
+<span class="sd">        Names of the map layers.</span>
+<span class="sd">    width : int</span>
+<span class="sd">        Width of the map in tiles.</span>
+<span class="sd">    height : int</span>
+<span class="sd">        Height of the map in tiles.</span>
+<span class="sd">    tile_properties : dict</span>
+<span class="sd">        Mapping of tile IDs to property dictionaries.</span>
+<span class="sd">    obstacles : set</span>
+<span class="sd">        Set of (x, y) tuples representing obstacles.</span>
+<span class="sd">    items : dict</span>
+<span class="sd">        Mapping of (x, y) positions to Item instances.</span>
+<span class="sd">    property_handlers : dict</span>
+<span class="sd">        Mapping of property names to handler functions.</span>
+<span class="sd">    trigger_handlers : dict</span>
+<span class="sd">        Mapping of trigger names to handler functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Map object, load map data, tileset, and set up obstacles and items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Map.name">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Main Map&quot;</span></div>
+
+<div class="viewcode-block" id="Map.tilewidth">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.tilewidth">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span> <span class="o">=</span> <span class="mi">32</span></div>
+
+<div class="viewcode-block" id="Map.tileheight">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.tileheight">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span> <span class="o">=</span> <span class="mi">32</span></div>
+
+<div class="viewcode-block" id="Map.tileset">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.tileset">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tileset</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Map.layers">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.layers">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Map.layer_names">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.layer_names">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_names</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Map.width">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.width">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Map.height">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.height">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Map.tile_properties">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.tile_properties">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># {tile_id: {property_name: value}}</span></div>
+
+<div class="viewcode-block" id="Map.obstacles">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.obstacles">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Map.items">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.items">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Item</span><span class="p">(</span><span class="s2">&quot;Sword 1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span> <span class="o">=</span> <span class="n">Item</span><span class="p">(</span><span class="s2">&quot;Sword 2&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Load TMX map and tileset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_tmx</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;maps&quot;</span><span class="p">,</span> <span class="s2">&quot;hajduk-mainmap.tmx&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_tileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;tilesets&quot;</span><span class="p">,</span> <span class="s2">&quot;hajduk-tileset.png&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Automate obstacle detection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">automate_obstacles</span><span class="p">()</span>
+
+        <span class="c1"># --- Property Handling ---</span>
+<div class="viewcode-block" id="Map.property_handlers">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.property_handlers">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property_handlers</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># property_name -&gt; handler function</span></div>
+
+
+        <span class="c1"># --- Trigger Handling ---</span>
+<div class="viewcode-block" id="Map.trigger_handlers">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.trigger_handlers">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_handlers</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1"># trigger_name -&gt; handler function</span></div>
+
+
+<div class="viewcode-block" id="Map.load_tmx">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.load_tmx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_tmx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmx_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load map data from a TMX file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tmx_path : str</span>
+<span class="sd">            Path to the TMX map file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">tmx_path</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;tilewidth&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;tileheight&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Parse tileset properties</span>
+        <span class="n">tileset_elem</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;tileset&#39;</span><span class="p">)</span>
+        <span class="n">tsx_source</span> <span class="o">=</span> <span class="n">tileset_elem</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tsx_source</span><span class="p">:</span>
+            <span class="n">tsx_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">tmx_path</span><span class="p">),</span> <span class="n">tsx_source</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_tileset_properties</span><span class="p">(</span><span class="n">tsx_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_tileset_properties_inline</span><span class="p">(</span><span class="n">tileset_elem</span><span class="p">)</span>
+
+        <span class="c1"># Parse layers and names</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;layer&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;Unnamed&#39;</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">layer_grid</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">):</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">x</span>
+                    <span class="n">tile_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tile_id</span><span class="p">)</span>
+                <span class="n">layer_grid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer_grid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Map.parse_tileset_properties">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.parse_tileset_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_tileset_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tsx_path</span><span class="p">):</span>
+        <span class="c1"># Parse external TSX tileset for tile properties</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">tsx_path</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;tile&#39;</span><span class="p">):</span>
+            <span class="n">tid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># TMX/TSX tile IDs are 0-based, map data is 1-based</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">properties</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;property&#39;</span><span class="p">):</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+                    <span class="n">type_</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span>
+                    <span class="c1"># Convert value to correct type</span>
+                    <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;bool&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+                    <span class="k">elif</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;float&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">props</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span></div>
+
+
+<div class="viewcode-block" id="Map.parse_tileset_properties_inline">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.parse_tileset_properties_inline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_tileset_properties_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tileset_elem</span><span class="p">):</span>
+        <span class="c1"># Parse inline tileset for tile properties</span>
+        <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">tileset_elem</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;tile&#39;</span><span class="p">):</span>
+            <span class="n">tid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">properties</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;properties&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;property&#39;</span><span class="p">):</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+                    <span class="n">type_</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;bool&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+                    <span class="k">elif</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">type_</span> <span class="o">==</span> <span class="s1">&#39;float&#39;</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">props</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span></div>
+
+
+<div class="viewcode-block" id="Map.load_tileset">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.load_tileset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_tileset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tileset_path</span><span class="p">):</span>
+        <span class="n">tileset_img</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tileset_path</span><span class="p">)</span><span class="o">.</span><span class="n">convert_alpha</span><span class="p">()</span>
+        <span class="n">tileset_width</span><span class="p">,</span> <span class="n">tileset_height</span> <span class="o">=</span> <span class="n">tileset_img</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">tileset_width</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">tileset_height</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tileset</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
+                <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span><span class="p">)</span>
+                <span class="n">tile</span> <span class="o">=</span> <span class="n">tileset_img</span><span class="o">.</span><span class="n">subsurface</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tileset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Map.automate_obstacles">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.automate_obstacles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">automate_obstacles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modular automation for obstacle detection based on tile properties and layer names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">lidx</span><span class="p">,</span> <span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">lname</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_names</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">tile_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">tile_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tile_id</span><span class="p">,</span> <span class="p">{})</span>
+                    <span class="c1"># Impassable Water Level</span>
+                    <span class="k">if</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;Impassable Water Level&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_allows_movement&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                    <span class="c1"># Impassable Borders</span>
+                    <span class="k">if</span> <span class="n">lname</span> <span class="o">==</span> <span class="s2">&quot;Impassable Borders&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_allows_movement&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_is_the_limit&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span></div>
+
+        <span class="c1"># (Extend here for more modular rules in the future)</span>
+
+<div class="viewcode-block" id="Map.update">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Map.draw">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">camera</span><span class="p">):</span>
+        <span class="n">screen</span><span class="o">.</span><span class="n">fill</span><span class="p">((</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layer</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">tile_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">tile_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">tile_img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileset</span><span class="p">[</span><span class="n">tile_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">world_to_screen</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+                        <span class="n">tile_img_scaled</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">tile_img</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">)))</span>
+                        <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">tile_img_scaled</span><span class="p">,</span> <span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">))</span>
+        <span class="c1"># Draw obstacles/items as overlays (optional for now)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">ox</span> <span class="o">*</span> <span class="mi">32</span><span class="p">,</span> <span class="n">oy</span> <span class="o">*</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rect</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">iy</span><span class="p">),</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">ix</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="n">iy</span> <span class="o">*</span> <span class="mi">32</span> <span class="o">+</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rect</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;last_clicked_tile&quot;</span><span class="p">):</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_clicked_tile</span>
+            <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">world_to_screen</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Map.get_top_tile">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.get_top_tile">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_top_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the tile_id of the top-most tile at (x, y), or 0 if none.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">:</span>
+                <span class="n">tile_id</span> <span class="o">=</span> <span class="n">layer</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">tile_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">tile_id</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="Map.is_passable">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.is_passable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_passable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the top-most tile at (x, y) allows movement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tile_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_top_tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tile_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># No tile, not passable</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tile_id</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">return</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_allows_movement&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Map.is_obstacle">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.is_obstacle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_obstacle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the tile at (x, y) is not passable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_passable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Map.get_movement_cost">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.get_movement_cost">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_movement_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the movement cost for the top-most tile at (x, y).</span>
+<span class="sd">        Defaults to 1 if not specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tile_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_top_tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tile_id</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_modifies_movement_cost&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span></div>
+
+
+    <span class="c1"># --- Property Handling ---</span>
+
+<div class="viewcode-block" id="Map.register_property_handler">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.register_property_handler">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_property_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a function to handle a specific tile property.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">property_handlers</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span></div>
+
+
+<div class="viewcode-block" id="Map.handle_tile_properties">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.handle_tile_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_tile_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call all registered property handlers for the top-most tile at (x, y).&quot;&quot;&quot;</span>
+        <span class="n">tile_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_top_tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tile_id</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_handlers</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">property_handlers</span><span class="p">[</span><span class="n">prop</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+    <span class="c1"># --- Trigger Handling ---</span>
+
+<div class="viewcode-block" id="Map.register_trigger_handler">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.register_trigger_handler">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_trigger_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger_name</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a function to handle a specific trigger.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_handlers</span><span class="p">[</span><span class="n">trigger_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span></div>
+
+
+<div class="viewcode-block" id="Map.fire_triggers">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.fire_triggers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fire_triggers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call all trigger handlers for the top-most tile at (x, y).&quot;&quot;&quot;</span>
+        <span class="n">tile_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_top_tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tile_id</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">prop</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;trigger_&quot;</span><span class="p">):</span>
+                <span class="n">trigger_type</span> <span class="o">=</span> <span class="n">prop</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;trigger_&quot;</span><span class="p">):]</span>
+                <span class="k">if</span> <span class="n">trigger_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_handlers</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">trigger_handlers</span><span class="p">[</span><span class="n">trigger_type</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Example: Call this when player moves</span>
+<div class="viewcode-block" id="Map.on_player_step">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.on_player_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_player_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">player</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call this when the player steps on a tile.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_tile_properties</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;player&quot;</span><span class="p">:</span> <span class="n">player</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fire_triggers</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;player&quot;</span><span class="p">:</span> <span class="n">player</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="Map.draw_path_preview">
+<a class="viewcode-back" href="../../autoapi/map/map/index.html#map.map.Map.draw_path_preview">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_path_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">camera</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">step_costs</span><span class="p">,</span> <span class="n">ap</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">step_costs</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">ap_left</span> <span class="o">=</span> <span class="n">ap</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">cost</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">step_costs</span><span class="p">)):</span>
+            <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">world_to_screen</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">ap_left</span> <span class="o">&gt;=</span> <span class="n">cost</span> <span class="k">else</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tilewidth</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tileheight</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">ap_left</span> <span class="o">-=</span> <span class="n">cost</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

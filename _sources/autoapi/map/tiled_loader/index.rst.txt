@@ -1,0 +1,84 @@
+map.tiled_loader
+================
+
+.. py:module:: map.tiled_loader
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   map.tiled_loader.TiledMap
+
+
+Module Contents
+---------------
+
+.. py:class:: TiledMap(filename)
+
+   Loads and renders a map from a Tiled TMX file using pytmx.
+
+   .. attribute:: tmx_data
+
+      The loaded TMX map data.
+
+      :type: pytmx.TiledMap
+
+   .. attribute:: width
+
+      Width of the map in tiles.
+
+      :type: int
+
+   .. attribute:: height
+
+      Height of the map in tiles.
+
+      :type: int
+
+   .. attribute:: tilewidth
+
+      Width of a tile in pixels.
+
+      :type: int
+
+   .. attribute:: tileheight
+
+      Height of a tile in pixels.
+
+      :type: int
+
+
+   .. py:attribute:: tmx_data
+
+
+   .. py:attribute:: width
+      :value: 0
+
+
+
+   .. py:attribute:: height
+      :value: 0
+
+
+
+   .. py:attribute:: tilewidth
+      :value: 0
+
+
+
+   .. py:attribute:: tileheight
+      :value: 0
+
+
+
+   .. py:method:: render(surface)
+
+      Render the map onto the given surface.
+
+      :param surface: The surface to render the map onto.
+      :type surface: pygame.Surface
+
+
+

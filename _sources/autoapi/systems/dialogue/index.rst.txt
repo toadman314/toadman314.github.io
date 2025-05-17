@@ -1,0 +1,40 @@
+systems.dialogue
+================
+
+.. py:module:: systems.dialogue
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   systems.dialogue.DialogueSystem
+
+
+Module Contents
+---------------
+
+.. py:class:: DialogueSystem(game)
+
+   Handles dialogue trees, choices, and NPC conversations.
+
+   .. attribute:: game
+
+      Reference to the main game object.
+
+      :type: Game
+
+
+   .. py:attribute:: game
+
+
+   .. py:method:: start_dialogue(npc)
+
+      Start a dialogue sequence with the given NPC.
+
+      :param npc: The NPC to start dialogue with.
+      :type npc: NPC
+
+
+

@@ -1,0 +1,173 @@
+core.state
+==========
+
+.. py:module:: core.state
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   core.state.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   core.state.GameState
+
+
+Module Contents
+---------------
+
+.. py:data:: logger
+
+.. py:class:: GameState
+
+   Holds all game data: map, entities, inventory, quests, etc.
+   Now supports JSON save/load.
+
+   .. attribute:: map
+
+      The current game map.
+
+      :type: Map
+
+   .. attribute:: entities
+
+      All entities in the game (player, NPCs, animals).
+
+      :type: list
+
+   .. attribute:: player
+
+      The player character.
+
+      :type: Player
+
+   .. attribute:: npcs
+
+      List of NPC entities.
+
+      :type: list
+
+   .. attribute:: animals
+
+      List of animal entities.
+
+      :type: list
+
+   .. attribute:: quests
+
+      List of active quests.
+
+      :type: list
+
+
+   .. py:attribute:: map
+      :value: None
+
+
+
+   .. py:attribute:: entities
+      :value: []
+
+
+
+   .. py:attribute:: player
+      :value: None
+
+
+
+   .. py:attribute:: npcs
+      :value: []
+
+
+
+   .. py:attribute:: animals
+      :value: []
+
+
+
+   .. py:attribute:: quests
+      :value: []
+
+
+
+   .. py:method:: item_to_dict(item)
+
+      Serialize an item to a dictionary.
+
+      :param item: The item to serialize.
+      :type item: Item
+
+      :returns: Dictionary representation of the item.
+      :rtype: dict
+
+
+
+   .. py:method:: item_from_dict(data, item_classes)
+
+      Deserialize an item from a dictionary.
+
+      :param data: Dictionary containing item data.
+      :type data: dict
+      :param item_classes: Mapping of item type names to classes.
+      :type item_classes: dict
+
+      :returns: The deserialized item instance.
+      :rtype: Item
+
+
+
+   .. py:method:: to_dict()
+
+      Serialize the entire game state to a dictionary.
+
+      :returns: Dictionary representation of the game state.
+      :rtype: dict
+
+
+
+   .. py:method:: from_dict(data, entity_classes, item_classes, map_class)
+
+      Restore the game state from a dictionary.
+
+      :param data: Dictionary containing the game state.
+      :type data: dict
+      :param entity_classes: Mapping of entity type names to classes.
+      :type entity_classes: dict
+      :param item_classes: Mapping of item type names to classes.
+      :type item_classes: dict
+      :param map_class: The map class to instantiate.
+      :type map_class: type
+
+
+
+   .. py:method:: save(slot=0)
+
+      Save the game state to a file.
+
+      :param slot: Save slot index (default is 0).
+      :type slot: int, optional
+
+
+
+   .. py:method:: load(slot=0, entity_classes=None, item_classes=None, map_class=None)
+
+      Load the game state from a file.
+
+      :param slot: Save slot index (default is 0).
+      :type slot: int, optional
+      :param entity_classes: Mapping of entity type names to classes.
+      :type entity_classes: dict, optional
+      :param item_classes: Mapping of item type names to classes.
+      :type item_classes: dict, optional
+      :param map_class: The map class to instantiate.
+      :type map_class: type, optional
+
+
+

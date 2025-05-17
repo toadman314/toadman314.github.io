@@ -1,0 +1,80 @@
+entities.base
+=============
+
+.. py:module:: entities.base
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   entities.base.Entity
+
+
+Module Contents
+---------------
+
+.. py:class:: Entity(x, y)
+
+   Base class for all entities in the game.
+
+   .. attribute:: x
+
+      X position on the map grid.
+
+      :type: int
+
+   .. attribute:: y
+
+      Y position on the map grid.
+
+      :type: int
+
+   .. attribute:: color
+
+      RGB color for rendering.
+
+      :type: tuple
+
+   .. attribute:: alive
+
+      Whether the entity is alive.
+
+      :type: bool
+
+
+   .. py:attribute:: x
+
+
+   .. py:attribute:: y
+
+
+   .. py:attribute:: color
+      :value: (200, 200, 50)
+
+
+
+   .. py:attribute:: alive
+      :value: True
+
+
+
+   .. py:method:: update()
+
+      Update the entity's state.
+      Override in subclasses for custom logic.
+
+
+
+   .. py:method:: draw(screen, camera)
+
+      Draw the entity as a rectangle or sprite on the screen.
+
+      :param screen: The display surface to draw on.
+      :type screen: pygame.Surface
+      :param camera: The camera for coordinate transforms.
+      :type camera: Camera
+
+
+

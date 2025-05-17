@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>entities.player &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for entities.player</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Entity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.encounter</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">KillEntityInteraction</span><span class="p">,</span> <span class="n">DisengageEntityInteraction</span><span class="p">,</span> <span class="n">PickUpItemInteraction</span><span class="p">,</span>
+    <span class="n">LeaveItemInteraction</span><span class="p">,</span> <span class="n">TradeInteraction</span><span class="p">,</span> <span class="n">DialogueInteraction</span><span class="p">,</span> <span class="n">EquipInteraction</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">entities.item</span><span class="w"> </span><span class="kn">import</span> <span class="n">Item</span><span class="p">,</span> <span class="n">InventorySlot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.game_events</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemEquippedEvent</span><span class="p">,</span> <span class="n">ItemUnequippedEvent</span><span class="p">,</span> <span class="n">StackChangedEvent</span><span class="p">,</span> <span class="n">InventoryFullEvent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">TILE_SIZE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">systems.effects</span><span class="w"> </span><span class="kn">import</span> <span class="n">EffectManager</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<div class="viewcode-block" id="logger">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.logger">[docs]</a>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Player">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Player</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the player character, including inventory, equipment, all stat categories, and active effects.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inventory : list</span>
+<span class="sd">        List of InventorySlot objects representing the player&#39;s inventory.</span>
+<span class="sd">    equipment : dict</span>
+<span class="sd">        Dictionary of equipped items by slot.</span>
+<span class="sd">    sprite : pygame.Surface</span>
+<span class="sd">        The player&#39;s sprite image.</span>
+<span class="sd">    planned_path : list</span>
+<span class="sd">        List of (x, y) tuples representing the planned movement path.</span>
+<span class="sd">    planned_path_costs : list</span>
+<span class="sd">        List of movement costs for each step in the planned path.</span>
+<span class="sd">    effects : EffectManager</span>
+<span class="sd">        Manages all stat modifiers and effects on the player.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ui.inventory.InventoryUI : Inventory panel for this player.</span>
+<span class="sd">    ui.character.CharacterUI : Character sheet panel for this player.</span>
+<span class="sd">    ui.questlog.QuestLogUI : Quest log panel for this player.</span>
+<span class="sd">    ui.abilities.AbilitiesUI : Abilities/perks panel for this player.</span>
+<span class="sd">    systems.quest.QuestSystem : Tracks and updates player quests.</span>
+<span class="sd">    core.state.GameState : Stores player data in game state.</span>
+<span class="sd">    systems.effects.EffectManager : Handles all stat modifications.</span>
+<span class="sd">    systems.effects.Effect : Represents a single stat modifier.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    - InventoryUI, CharacterUI, QuestLogUI, AbilitiesUI: UI panels displaying player data.</span>
+<span class="sd">    - QuestSystem: Tracks and updates player quests.</span>
+<span class="sd">    - GameState: Stores and loads player data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a Player object with default stats, inventory, and equipment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : int</span>
+<span class="sd">            X position on the map grid.</span>
+<span class="sd">        y : int</span>
+<span class="sd">            Y position on the map grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<div class="viewcode-block" id="Player.color">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.color">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Player.inventory">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.inventory">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of InventorySlot</span></div>
+
+<div class="viewcode-block" id="Player.equipment">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.equipment">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;head&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;face&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;torso&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;left arm&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;right arm&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;left hand&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;right hand&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;left palm&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;right palm&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;upper body&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;shoulders&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;pants&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;lower body&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;greaves&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;boots&quot;</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Player.sprite">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.sprite">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;assets/sprites/player.png&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">convert_alpha</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Player.health_condition">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.health_condition">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">health_condition</span> <span class="o">=</span> <span class="s2">&quot;Healthy&quot;</span></div>
+
+<div class="viewcode-block" id="Player.money">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.money">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">money</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Player.weight">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.weight">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Player.weight_limit">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.weight_limit">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_limit</span> <span class="o">=</span> <span class="mi">100</span></div>
+
+<div class="viewcode-block" id="Player.planned_path">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.planned_path">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planned_path</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of (x, y) tuples</span></div>
+
+<div class="viewcode-block" id="Player.planned_path_costs">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.planned_path_costs">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="Player.effects">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.effects">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">effects</span> <span class="o">=</span> <span class="n">EffectManager</span><span class="p">()</span></div>
+
+
+        <span class="c1"># --- BASIC STATS ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ActionPoints&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;HealthThreshold&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">&quot;BloodThreshold&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">&quot;StaminaThreshold&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s2">&quot;CarryLimit&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+            <span class="s2">&quot;CombatMobility&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;CombatSpeed&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;DamageResistance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;BluntResistance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;SharpResistance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;BlockingChance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;AttackDamage&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;CloseHitChance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;FarHitChance&quot;</span><span class="p">:</span> <span class="mf">1.00</span><span class="p">,</span>
+            <span class="s2">&quot;CombatVision&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;Observance&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;Inconspicuousness&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;Notoriety&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;SleepNeed&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;FoodNeed&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;DrinkNeed&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Sobriety&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># --- INNATE STATS ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;StrengthStat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;AgilityStat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;DexterityStat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;IntelligenceStat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">&quot;CharismaStat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># --- LEARNED STATS ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Prowess&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Acrobatics&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Speaking&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Acumen&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;OnehandWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;TwohandWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;PoleWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;OffhandWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;BowWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;CrossbowWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;HandcannonWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;ArmorWielding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;HorseRiding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;CartRiding&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;MedicalKnowledge&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;EngineeringKnowledge&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;CraftingKnowledge&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;SurvivalKnowledge&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># --- BASIC STATS PROPERTIES ---</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.action_points">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.action_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The current action points available to the player.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;ActionPoints&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@action_points</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;ActionPoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.max_action_points">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.max_action_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_action_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The maximum action points the player can have.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;ActionPoints&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@max_action_points</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_action_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;ActionPoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.health_threshold">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.health_threshold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">health_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s health threshold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;HealthThreshold&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@health_threshold</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">health_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;HealthThreshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.blood_threshold">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.blood_threshold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blood_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s blood threshold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BloodThreshold&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@blood_threshold</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blood_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BloodThreshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.stamina_threshold">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.stamina_threshold">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stamina_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s stamina threshold.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;StaminaThreshold&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@stamina_threshold</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stamina_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;StaminaThreshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.carry_limit">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.carry_limit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">carry_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s carry limit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CarryLimit&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@carry_limit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">carry_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CarryLimit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.combat_mobility">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.combat_mobility">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_mobility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s combat mobility.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatMobility&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@combat_mobility</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_mobility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatMobility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.combat_speed">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.combat_speed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s combat speed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatSpeed&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@combat_speed</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatSpeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.damage_resistance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.damage_resistance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">damage_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The player&#39;s damage resistance (percentage as a fraction, e.g., 0.75 for 75%).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;DamageResistance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@damage_resistance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">damage_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;DamageResistance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.blunt_resistance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.blunt_resistance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blunt_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The player&#39;s blunt damage resistance (percentage as a fraction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BluntResistance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@blunt_resistance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blunt_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BluntResistance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.sharp_resistance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.sharp_resistance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sharp_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The player&#39;s sharp damage resistance (percentage as a fraction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;SharpResistance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@sharp_resistance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sharp_resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;SharpResistance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.blocking_chance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.blocking_chance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blocking_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The player&#39;s chance to block an attack (percentage as a fraction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BlockingChance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@blocking_chance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blocking_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;BlockingChance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.attack_damage">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.attack_damage">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attack_damage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The base damage dealt by the player&#39;s attacks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;AttackDamage&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@attack_damage</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">attack_damage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;AttackDamage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.close_hit_chance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.close_hit_chance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_hit_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The chance to hit a target with close-range attacks (percentage as a fraction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CloseHitChance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@close_hit_chance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_hit_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CloseHitChance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.far_hit_chance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.far_hit_chance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">far_hit_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        float: The chance to hit a target with far-range attacks (percentage as a fraction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;FarHitChance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@far_hit_chance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">far_hit_chance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;FarHitChance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.combat_vision">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.combat_vision">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_vision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The range of the player&#39;s combat vision.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatVision&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@combat_vision</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">combat_vision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;CombatVision&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.observance">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.observance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s observance, affecting detection of hidden objects or enemies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Observance&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@observance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Observance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.inconspicuousness">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.inconspicuousness">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inconspicuousness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s inconspicuousness, affecting stealth and hiding.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Inconspicuousness&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@inconspicuousness</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inconspicuousness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Inconspicuousness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.notoriety">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.notoriety">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notoriety</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s notoriety, affecting how NPCs react to them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Notoriety&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@notoriety</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notoriety</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Notoriety&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.sleep_need">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.sleep_need">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sleep_need</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s need for sleep, affecting energy recovery.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;SleepNeed&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@sleep_need</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sleep_need</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;SleepNeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.food_need">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.food_need">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">food_need</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s need for food, affecting health and stamina.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;FoodNeed&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@food_need</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">food_need</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;FoodNeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.drink_need">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.drink_need">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drink_need</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s need for drink, affecting health and stamina.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;DrinkNeed&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@drink_need</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drink_need</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;DrinkNeed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.sobriety">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.sobriety">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sobriety</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s sobriety, affecting health and stamina recovery.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Sobriety&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@sobriety</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sobriety</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span><span class="p">[</span><span class="s2">&quot;Sobriety&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># --- INNATE STATS PROPERTIES ---</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.strength_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.strength_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">strength_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s strength stat (innate).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="s1">&#39;strength&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;StrengthStat&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@strength_stat</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">strength_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;StrengthStat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.agility_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.agility_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agility_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s agility stat (innate).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="s1">&#39;agility&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;AgilityStat&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@agility_stat</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agility_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;AgilityStat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.dexterity_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.dexterity_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dexterity_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s dexterity stat (innate).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="s1">&#39;dexterity&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;DexterityStat&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@dexterity_stat</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dexterity_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;DexterityStat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.intelligence_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.intelligence_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intelligence_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s intelligence stat (innate).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="s1">&#39;intelligence&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;IntelligenceStat&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@intelligence_stat</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intelligence_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;IntelligenceStat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.charisma_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.charisma_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">charisma_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s charisma stat (innate).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="s1">&#39;charisma&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;CharismaStat&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@charisma_stat</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">charisma_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span><span class="p">[</span><span class="s2">&quot;CharismaStat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># --- LEARNED STATS PROPERTIES ---</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.prowess">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.prowess">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prowess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s prowess (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Prowess&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@prowess</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prowess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Prowess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.acrobatics">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.acrobatics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acrobatics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s acrobatics (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Acrobatics&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@acrobatics</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acrobatics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Acrobatics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.speaking">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.speaking">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speaking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s speaking (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Speaking&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@speaking</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speaking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Speaking&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.acumen">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.acumen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acumen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s acumen (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Acumen&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@acumen</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acumen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;Acumen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.onehand_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.onehand_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">onehand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s one-hand wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;OnehandWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@onehand_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">onehand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;OnehandWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.twohand_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.twohand_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">twohand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s two-hand wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;TwohandWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@twohand_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">twohand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;TwohandWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.pole_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.pole_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pole_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s pole weapon wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;PoleWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@pole_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pole_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;PoleWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.offhand_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.offhand_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">offhand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s off-hand wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;OffhandWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@offhand_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">offhand_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;OffhandWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.bow_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.bow_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bow_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s bow wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;BowWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@bow_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bow_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;BowWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.crossbow_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.crossbow_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crossbow_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s crossbow wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CrossbowWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@crossbow_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crossbow_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CrossbowWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.handcannon_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.handcannon_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handcannon_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s handcannon wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;HandcannonWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@handcannon_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handcannon_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;HandcannonWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.armor_wielding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.armor_wielding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">armor_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s armor wielding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;ArmorWielding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@armor_wielding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">armor_wielding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;ArmorWielding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.horse_riding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.horse_riding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">horse_riding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s horse riding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;HorseRiding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@horse_riding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">horse_riding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;HorseRiding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.cart_riding">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.cart_riding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cart_riding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s cart riding (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CartRiding&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@cart_riding</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cart_riding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CartRiding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.medical_knowledge">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.medical_knowledge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">medical_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s medical knowledge (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;MedicalKnowledge&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@medical_knowledge</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">medical_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;MedicalKnowledge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.engineering_knowledge">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.engineering_knowledge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">engineering_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s engineering knowledge (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;EngineeringKnowledge&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@engineering_knowledge</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">engineering_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;EngineeringKnowledge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.crafting_knowledge">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.crafting_knowledge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crafting_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s crafting knowledge (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CraftingKnowledge&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@crafting_knowledge</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crafting_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;CraftingKnowledge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.survival_knowledge">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.survival_knowledge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">survival_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: The player&#39;s survival knowledge (learned stat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;SurvivalKnowledge&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@survival_knowledge</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">survival_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span><span class="p">[</span><span class="s2">&quot;SurvivalKnowledge&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># Optionally, expose the dicts for iteration/serialization</span>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.basic_stats">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.basic_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">basic_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dict: Dictionary of all basic stats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic_stats</span></div>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.innate_stats">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.innate_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">innate_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dict: Dictionary of all innate stats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_innate_stats</span></div>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Player.learned_stats">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.learned_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">learned_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dict: Dictionary of all learned stats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_learned_stats</span></div>
+
+
+<div class="viewcode-block" id="Player.refill_action_points">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.refill_action_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refill_action_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refill the player&#39;s action points to the maximum value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_action_points</span></div>
+
+
+<div class="viewcode-block" id="Player.choose_interaction">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.choose_interaction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choose_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">encounter_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines which interaction to use based on the encounter type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target : object</span>
+<span class="sd">            The target entity or item.</span>
+<span class="sd">        encounter_type : str</span>
+<span class="sd">            The type of encounter (&quot;entity&quot;, &quot;item&quot;, or &quot;object&quot;).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object or None</span>
+<span class="sd">            The chosen interaction object, or None if no valid interaction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">encounter_type</span> <span class="o">==</span> <span class="s2">&quot;entity&quot;</span><span class="p">:</span>
+            <span class="c1"># Placeholder: If NPC, offer trade/talk, else attack</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s2">&quot;__class__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;NPC&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">DialogueInteraction</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">KillEntityInteraction</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">encounter_type</span> <span class="o">==</span> <span class="s2">&quot;item&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PickUpItemInteraction</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">encounter_type</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DisengageEntityInteraction</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Player.add_item">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.add_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds an item (with optional count) to the inventory, handling stacking.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item : Item</span>
+<span class="sd">            The item to add.</span>
+<span class="sd">        count : int, optional</span>
+<span class="sd">            The number of items to add (default is 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Tried to add None item to inventory.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s2">&quot;stackable&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">slot</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span> <span class="o">&lt;</span> <span class="n">item</span><span class="o">.</span><span class="n">max_stack</span><span class="p">:</span>
+                    <span class="n">addable</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">max_stack</span> <span class="o">-</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">addable</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">InventoryFullEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+                        <span class="k">continue</span>
+                    <span class="n">slot</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">addable</span>
+                    <span class="n">count</span> <span class="o">-=</span> <span class="n">addable</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">StackChangedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">return</span>
+            <span class="k">while</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">addable</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">max_stack</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">InventorySlot</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">addable</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">StackChangedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">addable</span><span class="p">))</span>
+                <span class="n">count</span> <span class="o">-=</span> <span class="n">addable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">InventorySlot</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">StackChangedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Player.remove_item">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.remove_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot_index</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes a specified count of items from a given inventory slot.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slot_index : int</span>
+<span class="sd">            The index of the inventory slot.</span>
+<span class="sd">        count : int, optional</span>
+<span class="sd">            The number of items to remove (default is 1).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">slot_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">slot_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tried to remove item from invalid inventory index </span><span class="si">{</span><span class="n">slot_index</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">[</span><span class="n">slot_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tried to remove </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> items from a stack of </span><span class="si">{</span><span class="n">slot</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span>
+        <span class="k">if</span> <span class="n">slot</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">slot</span><span class="o">.</span><span class="n">count</span> <span class="o">-=</span> <span class="n">count</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">slot_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Player.drop_item">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.drop_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">drop_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot</span><span class="p">,</span> <span class="n">game_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Drops an item from the inventory onto the map at the player&#39;s position.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slot : InventorySlot</span>
+<span class="sd">            The inventory slot containing the item to drop.</span>
+<span class="sd">        game_map : GameMap</span>
+<span class="sd">            The game map instance, used to determine drop position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slot</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">[</span><span class="n">slot</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">slot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_item</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">game_map</span><span class="o">.</span><span class="n">items</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)]</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="Player.use_item">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.use_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses an item from the inventory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slot : InventorySlot</span>
+<span class="sd">            The inventory slot containing the item to use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slot</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">[</span><span class="n">slot</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">slot</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Player.equip_item">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.equip_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">equip_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Equips an item from the inventory to the appropriate equipment slot.</span>
+<span class="sd">        Swaps out any currently equipped item.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slot_index : int</span>
+<span class="sd">            The index of the inventory slot containing the item to equip.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">slot_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">slot_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tried to equip from invalid inventory index </span><span class="si">{</span><span class="n">slot_index</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">slot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inventory</span><span class="p">[</span><span class="n">slot_index</span><span class="p">]</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">item</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot equip </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: not an equippable item.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">slot_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot equip </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: invalid equipment slot &#39;</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">currently_equipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_item</span><span class="p">(</span><span class="n">slot_index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">ItemEquippedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">currently_equipped</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;game&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">game</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">post_immediate</span><span class="p">(</span><span class="n">ItemUnequippedEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currently_equipped</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">slot_type</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">currently_equipped</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Player.draw">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.draw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">camera</span><span class="p">):</span>
+        <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">world_to_screen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_width</span><span class="p">(),</span> <span class="n">screen</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span>
+        <span class="n">sprite_scaled</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sprite</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">TILE_SIZE</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">TILE_SIZE</span> <span class="o">*</span> <span class="n">camera</span><span class="o">.</span><span class="n">zoom</span><span class="p">)))</span>
+        <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">sprite_scaled</span><span class="p">,</span> <span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Player.confirm_move">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.confirm_move">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move along the planned path, consuming action points (cost 1 for orthogonal, 1.5 for diagonal).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        game_map : GameMap</span>
+<span class="sd">            The game map instance, used to check passability of tiles.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of steps successfully moved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">planned_path</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_points</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">next_x</span><span class="p">,</span> <span class="n">next_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">planned_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">step_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">planned_path_costs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">planned_path_costs</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">game_map</span><span class="o">.</span><span class="n">is_passable</span><span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">next_y</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_points</span> <span class="o">&lt;</span> <span class="n">step_cost</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">,</span> <span class="n">next_y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">planned_path</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">planned_path_costs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_points</span> <span class="o">-=</span> <span class="n">step_cost</span>
+            <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">game_map</span><span class="p">,</span> <span class="s1">&#39;on_player_step&#39;</span><span class="p">):</span>
+                <span class="n">game_map</span><span class="o">.</span><span class="n">on_player_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">steps</span></div>
+
+
+<div class="viewcode-block" id="Player.get_modified_stat">
+<a class="viewcode-back" href="../../autoapi/entities/player/index.html#entities.player.Player.get_modified_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_modified_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stat_name</span><span class="p">,</span> <span class="n">base_value</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the stat value after applying all active effects.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stat_name : str</span>
+<span class="sd">            The name of the stat to query.</span>
+<span class="sd">        base_value : float</span>
+<span class="sd">            The base value of the stat.</span>
+<span class="sd">        context : dict, optional</span>
+<span class="sd">            Context for conditioned/contextual effects.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The modified stat value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="o">.</span><span class="n">get_modified_stat</span><span class="p">(</span><span class="n">base_value</span><span class="p">,</span> <span class="n">stat_name</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

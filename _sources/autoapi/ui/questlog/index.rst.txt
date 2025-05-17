@@ -1,0 +1,89 @@
+ui.questlog
+===========
+
+.. py:module:: ui.questlog
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   ui.questlog.QuestLogUI
+
+
+Module Contents
+---------------
+
+.. py:class:: QuestLogUI(player)
+
+   UI for displaying the player's quest log.
+
+   .. attribute:: player
+
+      The player whose quest log is displayed.
+
+      :type: Player
+
+   .. attribute:: visible
+
+      Whether the quest log UI is visible.
+
+      :type: bool
+
+   .. attribute:: font
+
+      Font used for quest log text.
+
+      :type: pygame.font.Font
+
+   .. seealso::
+
+      :py:obj:`systems.quest.QuestSystem`
+          Manages quest states and logic.
+
+      :py:obj:`ui.manager.UIManager`
+          Manages all UI panels, including this one.
+
+      :py:obj:`entities.player.Player`
+          Player object whose quests are shown.
+
+   .. rubric:: References
+
+   - QuestSystem: Handles quest logic and state.
+   - UIManager: Controls panel toggling and event routing.
+   - Player: Source of quest data.
+
+
+   .. py:attribute:: player
+
+
+   .. py:attribute:: visible
+      :value: False
+
+
+
+   .. py:attribute:: font
+
+
+   .. py:attribute:: bg_image
+
+
+   .. py:method:: toggle()
+
+      Toggle the visibility of the Quest Log UI.
+
+
+
+   .. py:method:: handle_event(event)
+
+      Handle events for the Quest Log UI.
+
+
+
+   .. py:method:: draw(screen)
+
+      Draw the Quest Log UI panel with the graphical background.
+
+
+
