@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>map.map &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-map.map">
+<span id="map-map"></span><h1>map.map<a class="headerlink" href="#module-map.map" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#map.map.Map" title="map.map.Map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Map</span></code></a></p></td>
+<td><p>Represents the game map, including tiles, layers, obstacles, and items.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="map.map.Map">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">map.map.</span></span><span class="sig-name descname"><span class="pre">Map</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map" title="Link to this definition">¶</a></dt>
+<dd><p>Represents the game map, including tiles, layers, obstacles, and items.
+Handles loading from TMX files and tilesets, and provides map logic.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.name" title="Link to this definition">¶</a></dt>
+<dd><p>Name of the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.tilewidth">
+<span class="sig-name descname"><span class="pre">tilewidth</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.tilewidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.tilewidth" title="Link to this definition">¶</a></dt>
+<dd><p>Width of a tile in pixels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.tileheight">
+<span class="sig-name descname"><span class="pre">tileheight</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.tileheight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.tileheight" title="Link to this definition">¶</a></dt>
+<dd><p>Height of a tile in pixels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.tileset">
+<span class="sig-name descname"><span class="pre">tileset</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.tileset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.tileset" title="Link to this definition">¶</a></dt>
+<dd><p>List of tile images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.layers">
+<span class="sig-name descname"><span class="pre">layers</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.layers" title="Link to this definition">¶</a></dt>
+<dd><p>List of map layers (2D arrays of tile IDs).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.layer_names">
+<span class="sig-name descname"><span class="pre">layer_names</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.layer_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.layer_names" title="Link to this definition">¶</a></dt>
+<dd><p>Names of the map layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.width" title="Link to this definition">¶</a></dt>
+<dd><p>Width of the map in tiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.height" title="Link to this definition">¶</a></dt>
+<dd><p>Height of the map in tiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.tile_properties">
+<span class="sig-name descname"><span class="pre">tile_properties</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.tile_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.tile_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Mapping of tile IDs to property dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.obstacles">
+<span class="sig-name descname"><span class="pre">obstacles</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.obstacles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.obstacles" title="Link to this definition">¶</a></dt>
+<dd><p>Set of (x, y) tuples representing obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.items">
+<span class="sig-name descname"><span class="pre">items</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.items" title="Link to this definition">¶</a></dt>
+<dd><p>Mapping of (x, y) positions to Item instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.property_handlers">
+<span class="sig-name descname"><span class="pre">property_handlers</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.property_handlers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.property_handlers" title="Link to this definition">¶</a></dt>
+<dd><p>Mapping of property names to handler functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="map.map.Map.trigger_handlers">
+<span class="sig-name descname"><span class="pre">trigger_handlers</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.trigger_handlers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.trigger_handlers" title="Link to this definition">¶</a></dt>
+<dd><p>Mapping of trigger names to handler functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Main</span> <span class="pre">Map'</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">tilewidth</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.tilewidth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">tileheight</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.tileheight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">tileset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.tileset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">layers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.layers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">layer_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.layer_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">width</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.width"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">height</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="reference internal" href="../../../_modules/map/map.html#Map.height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">tile_properties</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.tile_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">obstacles</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.obstacles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">items</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">property_handlers</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.property_handlers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">trigger_handlers</span></span><a class="reference internal" href="../../../_modules/map/map.html#Map.trigger_handlers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.load_tmx">
+<span class="sig-name descname"><span class="pre">load_tmx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmx_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.load_tmx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.load_tmx" title="Link to this definition">¶</a></dt>
+<dd><p>Load map data from a TMX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tmx_path</strong> (<em>str</em>) – Path to the TMX map file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.parse_tileset_properties">
+<span class="sig-name descname"><span class="pre">parse_tileset_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsx_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.parse_tileset_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.parse_tileset_properties" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.parse_tileset_properties_inline">
+<span class="sig-name descname"><span class="pre">parse_tileset_properties_inline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tileset_elem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.parse_tileset_properties_inline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.parse_tileset_properties_inline" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.load_tileset">
+<span class="sig-name descname"><span class="pre">load_tileset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tileset_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.load_tileset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.load_tileset" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.automate_obstacles">
+<span class="sig-name descname"><span class="pre">automate_obstacles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.automate_obstacles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.automate_obstacles" title="Link to this definition">¶</a></dt>
+<dd><p>Modular automation for obstacle detection based on tile properties and layer names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.draw" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.get_top_tile">
+<span class="sig-name descname"><span class="pre">get_top_tile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.get_top_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.get_top_tile" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the tile_id of the top-most tile at (x, y), or 0 if none.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.is_passable">
+<span class="sig-name descname"><span class="pre">is_passable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.is_passable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.is_passable" title="Link to this definition">¶</a></dt>
+<dd><p>Returns True if the top-most tile at (x, y) allows movement.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.is_obstacle">
+<span class="sig-name descname"><span class="pre">is_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.is_obstacle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.is_obstacle" title="Link to this definition">¶</a></dt>
+<dd><p>Returns True if the tile at (x, y) is not passable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.get_movement_cost">
+<span class="sig-name descname"><span class="pre">get_movement_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.get_movement_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.get_movement_cost" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the movement cost for the top-most tile at (x, y).
+Defaults to 1 if not specified.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.register_property_handler">
+<span class="sig-name descname"><span class="pre">register_property_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.register_property_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.register_property_handler" title="Link to this definition">¶</a></dt>
+<dd><p>Register a function to handle a specific tile property.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.handle_tile_properties">
+<span class="sig-name descname"><span class="pre">handle_tile_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.handle_tile_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.handle_tile_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Call all registered property handlers for the top-most tile at (x, y).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.register_trigger_handler">
+<span class="sig-name descname"><span class="pre">register_trigger_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.register_trigger_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.register_trigger_handler" title="Link to this definition">¶</a></dt>
+<dd><p>Register a function to handle a specific trigger.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.fire_triggers">
+<span class="sig-name descname"><span class="pre">fire_triggers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.fire_triggers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.fire_triggers" title="Link to this definition">¶</a></dt>
+<dd><p>Call all trigger handlers for the top-most tile at (x, y).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.on_player_step">
+<span class="sig-name descname"><span class="pre">on_player_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">player</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.on_player_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.on_player_step" title="Link to this definition">¶</a></dt>
+<dd><p>Call this when the player steps on a tile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="map.map.Map.draw_path_preview">
+<span class="sig-name descname"><span class="pre">draw_path_preview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_costs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/map/map.html#Map.draw_path_preview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#map.map.Map.draw_path_preview" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/map/map/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

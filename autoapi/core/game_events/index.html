@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>core.game_events &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-core.game_events">
+<span id="core-game-events"></span><h1>core.game_events<a class="headerlink" href="#module-core.game_events" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.game_events.ItemPickedUpEvent" title="core.game_events.ItemPickedUpEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemPickedUpEvent</span></code></a></p></td>
+<td><p>Event triggered when a player picks up an item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.game_events.ItemEquippedEvent" title="core.game_events.ItemEquippedEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemEquippedEvent</span></code></a></p></td>
+<td><p>Event triggered when a player equips an item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.game_events.ItemUnequippedEvent" title="core.game_events.ItemUnequippedEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemUnequippedEvent</span></code></a></p></td>
+<td><p>Event triggered when a player unequips an item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.game_events.StackChangedEvent" title="core.game_events.StackChangedEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StackChangedEvent</span></code></a></p></td>
+<td><p>Event triggered when the stack count of an item changes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.game_events.InventoryFullEvent" title="core.game_events.InventoryFullEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InventoryFullEvent</span></code></a></p></td>
+<td><p>Event triggered when the player's inventory is full and an item cannot be added.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game_events.ItemPickedUpEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game_events.</span></span><span class="sig-name descname"><span class="pre">ItemPickedUpEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemPickedUpEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemPickedUpEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Event triggered when a player picks up an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemPickedUpEvent.player">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemPickedUpEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemPickedUpEvent.player" title="Link to this definition">¶</a></dt>
+<dd><p>The player who picked up the item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/player/index.html#entities.player.Player" title="entities.player.Player">Player</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemPickedUpEvent.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemPickedUpEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemPickedUpEvent.item" title="Link to this definition">¶</a></dt>
+<dd><p>The item that was picked up.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/item/index.html#entities.item.Item" title="entities.item.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemPickedUpEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemPickedUpEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game_events.ItemEquippedEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game_events.</span></span><span class="sig-name descname"><span class="pre">ItemEquippedEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slot</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemEquippedEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Event triggered when a player equips an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemEquippedEvent.player">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemEquippedEvent.player" title="Link to this definition">¶</a></dt>
+<dd><p>The player who equipped the item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/player/index.html#entities.player.Player" title="entities.player.Player">Player</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemEquippedEvent.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemEquippedEvent.item" title="Link to this definition">¶</a></dt>
+<dd><p>The item that was equipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/item/index.html#entities.item.Item" title="entities.item.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemEquippedEvent.slot">
+<span class="sig-name descname"><span class="pre">slot</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.slot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemEquippedEvent.slot" title="Link to this definition">¶</a></dt>
+<dd><p>The equipment slot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">slot</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemEquippedEvent.slot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game_events.ItemUnequippedEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game_events.</span></span><span class="sig-name descname"><span class="pre">ItemUnequippedEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slot</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemUnequippedEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Event triggered when a player unequips an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemUnequippedEvent.player">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemUnequippedEvent.player" title="Link to this definition">¶</a></dt>
+<dd><p>The player who unequipped the item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/player/index.html#entities.player.Player" title="entities.player.Player">Player</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemUnequippedEvent.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemUnequippedEvent.item" title="Link to this definition">¶</a></dt>
+<dd><p>The item that was unequipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/item/index.html#entities.item.Item" title="entities.item.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.ItemUnequippedEvent.slot">
+<span class="sig-name descname"><span class="pre">slot</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.slot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.ItemUnequippedEvent.slot" title="Link to this definition">¶</a></dt>
+<dd><p>The equipment slot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">slot</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#ItemUnequippedEvent.slot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game_events.StackChangedEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game_events.</span></span><span class="sig-name descname"><span class="pre">StackChangedEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.StackChangedEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Event triggered when the stack count of an item changes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.StackChangedEvent.player">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.StackChangedEvent.player" title="Link to this definition">¶</a></dt>
+<dd><p>The player whose item stack changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/player/index.html#entities.player.Player" title="entities.player.Player">Player</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.StackChangedEvent.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.StackChangedEvent.item" title="Link to this definition">¶</a></dt>
+<dd><p>The item whose stack changed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/item/index.html#entities.item.Item" title="entities.item.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.StackChangedEvent.new_count">
+<span class="sig-name descname"><span class="pre">new_count</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.new_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.StackChangedEvent.new_count" title="Link to this definition">¶</a></dt>
+<dd><p>The new stack count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">new_count</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#StackChangedEvent.new_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game_events.InventoryFullEvent">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game_events.</span></span><span class="sig-name descname"><span class="pre">InventoryFullEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game_events.html#InventoryFullEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.InventoryFullEvent" title="Link to this definition">¶</a></dt>
+<dd><p>Event triggered when the player’s inventory is full and an item cannot be added.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.InventoryFullEvent.player">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#InventoryFullEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.InventoryFullEvent.player" title="Link to this definition">¶</a></dt>
+<dd><p>The player whose inventory is full.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/player/index.html#entities.player.Player" title="entities.player.Player">Player</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game_events.InventoryFullEvent.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#InventoryFullEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game_events.InventoryFullEvent.item" title="Link to this definition">¶</a></dt>
+<dd><p>The item that could not be added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/item/index.html#entities.item.Item" title="entities.item.Item">Item</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">player</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#InventoryFullEvent.player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/game_events.html#InventoryFullEvent.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/core/game_events/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>core.encounter &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-core.encounter">
+<span id="core-encounter"></span><h1>core.encounter<a class="headerlink" href="#module-core.encounter" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.encounter.Encounter" title="core.encounter.Encounter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Encounter</span></code></a></p></td>
+<td><p>Handles an encounter between two entities or an entity and an object/item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p></td>
+<td><p>Base class for all interactions during encounters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.encounter.KillEntityInteraction" title="core.encounter.KillEntityInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KillEntityInteraction</span></code></a></p></td>
+<td><p>Interaction for killing an entity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.encounter.DisengageEntityInteraction" title="core.encounter.DisengageEntityInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DisengageEntityInteraction</span></code></a></p></td>
+<td><p>Interaction for disengaging from an encounter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.encounter.PickUpItemInteraction" title="core.encounter.PickUpItemInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickUpItemInteraction</span></code></a></p></td>
+<td><p>Interaction for picking up an item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.encounter.LeaveItemInteraction" title="core.encounter.LeaveItemInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LeaveItemInteraction</span></code></a></p></td>
+<td><p>Interaction for leaving an item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.encounter.TradeInteraction" title="core.encounter.TradeInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TradeInteraction</span></code></a></p></td>
+<td><p>Interaction for trading with another entity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#core.encounter.DialogueInteraction" title="core.encounter.DialogueInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DialogueInteraction</span></code></a></p></td>
+<td><p>Interaction for starting a dialogue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.encounter.EquipInteraction" title="core.encounter.EquipInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquipInteraction</span></code></a></p></td>
+<td><p>Interaction for equipping an item.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.Encounter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">Encounter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encounter_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Encounter" title="Link to this definition">¶</a></dt>
+<dd><p>Handles an encounter between two entities or an entity and an object/item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.Encounter.initiator">
+<span class="sig-name descname"><span class="pre">initiator</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.initiator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Encounter.initiator" title="Link to this definition">¶</a></dt>
+<dd><p>The entity initiating the encounter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity">Entity</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.Encounter.target">
+<span class="sig-name descname"><span class="pre">target</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Encounter.target" title="Link to this definition">¶</a></dt>
+<dd><p>The target of the encounter (entity, item, or object).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity">Entity</a> or object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.Encounter.encounter_type">
+<span class="sig-name descname"><span class="pre">encounter_type</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.encounter_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Encounter.encounter_type" title="Link to this definition">¶</a></dt>
+<dd><p>The type of encounter (e.g., ‘entity’, ‘item’, ‘object’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">initiator</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.initiator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">target</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">encounter_type</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.encounter_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.Encounter.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#Encounter.resolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Encounter.resolve" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve the encounter by selecting and executing an interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The outcome of the interaction, or None if no interaction occurred.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.Interaction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">Interaction</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#Interaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Interaction" title="Link to this definition">¶</a></dt>
+<dd><p>Base class for all interactions during encounters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.Interaction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#Interaction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.Interaction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.KillEntityInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">KillEntityInteraction</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#KillEntityInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.KillEntityInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for killing an entity.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.KillEntityInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#KillEntityInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.KillEntityInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.DisengageEntityInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">DisengageEntityInteraction</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#DisengageEntityInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.DisengageEntityInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for disengaging from an encounter.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.DisengageEntityInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#DisengageEntityInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.DisengageEntityInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.PickUpItemInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">PickUpItemInteraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#PickUpItemInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.PickUpItemInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for picking up an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.PickUpItemInteraction.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#PickUpItemInteraction.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.PickUpItemInteraction.item" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.PickUpItemInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#PickUpItemInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.PickUpItemInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.LeaveItemInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">LeaveItemInteraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#LeaveItemInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.LeaveItemInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for leaving an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.LeaveItemInteraction.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#LeaveItemInteraction.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.LeaveItemInteraction.item" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.LeaveItemInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#LeaveItemInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.LeaveItemInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.TradeInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">TradeInteraction</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#TradeInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.TradeInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for trading with another entity.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.TradeInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#TradeInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.TradeInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.DialogueInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">DialogueInteraction</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#DialogueInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.DialogueInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for starting a dialogue.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.DialogueInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#DialogueInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.DialogueInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="core.encounter.EquipInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.encounter.</span></span><span class="sig-name descname"><span class="pre">EquipInteraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#EquipInteraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.EquipInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.encounter.Interaction" title="core.encounter.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Interaction</span></code></a></p>
+<p>Interaction for equipping an item.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.encounter.EquipInteraction.item">
+<span class="sig-name descname"><span class="pre">item</span></span><a class="reference internal" href="../../../_modules/core/encounter.html#EquipInteraction.item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.EquipInteraction.item" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.encounter.EquipInteraction.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/encounter.html#EquipInteraction.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.encounter.EquipInteraction.execute" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the interaction between initiator and target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity initiating the interaction.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em> or </em><em>object</em>) – The target of the interaction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The outcome of the interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/core/encounter/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

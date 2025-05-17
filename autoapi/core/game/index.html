@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>core.game &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-core.game">
+<span id="core-game"></span><h1>core.game<a class="headerlink" href="#module-core.game" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#core.game.Game" title="core.game.Game"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Game</span></code></a></p></td>
+<td><p>Main game controller for Hajduk RPG.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="core.game.Game">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">core.game.</span></span><span class="sig-name descname"><span class="pre">Game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game" title="Link to this definition">¶</a></dt>
+<dd><p>Main game controller for Hajduk RPG.</p>
+<p>Handles game state, event loop, rendering, and core systems such as combat, quests, and dialogue.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.screen">
+<span class="sig-name descname"><span class="pre">screen</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.screen" title="Link to this definition">¶</a></dt>
+<dd><p>The main display surface for rendering the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pygame.Surface</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.clock">
+<span class="sig-name descname"><span class="pre">clock</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.clock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.clock" title="Link to this definition">¶</a></dt>
+<dd><p>The game clock for managing frame rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pygame.time.Clock</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.running">
+<span class="sig-name descname"><span class="pre">running</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.running" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the game loop is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.state" title="Link to this definition">¶</a></dt>
+<dd><p>The current game state, including map and entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../state/index.html#core.state.GameState" title="core.state.GameState">GameState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.events">
+<span class="sig-name descname"><span class="pre">events</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.events" title="Link to this definition">¶</a></dt>
+<dd><p>The event manager for posting and processing events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../events/index.html#core.events.EventManager" title="core.events.EventManager">EventManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.camera">
+<span class="sig-name descname"><span class="pre">camera</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.camera" title="Link to this definition">¶</a></dt>
+<dd><p>The camera object for world-to-screen transforms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../camera/index.html#core.camera.Camera" title="core.camera.Camera">Camera</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.ui_manager">
+<span class="sig-name descname"><span class="pre">ui_manager</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.ui_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.ui_manager" title="Link to this definition">¶</a></dt>
+<dd><p>The UI manager for HUD and panels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../ui/manager/index.html#ui.manager.UIManager" title="ui.manager.UIManager">UIManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.phase">
+<span class="sig-name descname"><span class="pre">phase</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.phase" title="Link to this definition">¶</a></dt>
+<dd><p>The current game phase (e.g., ‘PLAYER_TURN’, ‘NPC_TURN’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.combat_system">
+<span class="sig-name descname"><span class="pre">combat_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.combat_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.combat_system" title="Link to this definition">¶</a></dt>
+<dd><p>The combat system instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../systems/combat/index.html#systems.combat.CombatSystem" title="systems.combat.CombatSystem">CombatSystem</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.quest_system">
+<span class="sig-name descname"><span class="pre">quest_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.quest_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.quest_system" title="Link to this definition">¶</a></dt>
+<dd><p>The quest system instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../systems/quest/index.html#systems.quest.QuestSystem" title="systems.quest.QuestSystem">QuestSystem</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.dialogue_system">
+<span class="sig-name descname"><span class="pre">dialogue_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.dialogue_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.dialogue_system" title="Link to this definition">¶</a></dt>
+<dd><p>The dialogue system instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../systems/dialogue/index.html#systems.dialogue.DialogueSystem" title="systems.dialogue.DialogueSystem">DialogueSystem</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.selected_tile">
+<span class="sig-name descname"><span class="pre">selected_tile</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.selected_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.selected_tile" title="Link to this definition">¶</a></dt>
+<dd><p>The currently selected map tile (x, y) or None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.current_path">
+<span class="sig-name descname"><span class="pre">current_path</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.current_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.current_path" title="Link to this definition">¶</a></dt>
+<dd><p>The current planned path for the player (list of (x, y)).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.current_path_costs">
+<span class="sig-name descname"><span class="pre">current_path_costs</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.current_path_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.current_path_costs" title="Link to this definition">¶</a></dt>
+<dd><p>The action point costs for each step in the current path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="core.game.Game.move_confirmed">
+<span class="sig-name descname"><span class="pre">move_confirmed</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.move_confirmed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.move_confirmed" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the player’s move has been confirmed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">screen</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.screen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">clock</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.clock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">running</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">events</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">camera</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">ui_manager</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.ui_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">phase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PLAYER_TURN'</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">combat_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.combat_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">quest_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.quest_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">dialogue_system</span></span><a class="reference internal" href="../../../_modules/core/game.html#Game.dialogue_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">selected_tile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.selected_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">current_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.current_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">current_path_costs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.current_path_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">move_confirmed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="reference internal" href="../../../_modules/core/game.html#Game.move_confirmed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.run" title="Link to this definition">¶</a></dt>
+<dd><p>Main game loop. Handles updating, event processing, and rendering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.handle_events">
+<span class="sig-name descname"><span class="pre">handle_events</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.handle_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.handle_events" title="Link to this definition">¶</a></dt>
+<dd><p>Process all Pygame events, including UI and map interactions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.update" title="Link to this definition">¶</a></dt>
+<dd><p>Update the game state for the current phase (player, NPC, animal turns, etc.).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.check_encounters">
+<span class="sig-name descname"><span class="pre">check_encounters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initiator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.check_encounters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.check_encounters" title="Link to this definition">¶</a></dt>
+<dd><p>Check for and resolve encounters between entities or with map objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initiator</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a>) – The entity whose turn is being processed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.is_position_free">
+<span class="sig-name descname"><span class="pre">is_position_free</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_entity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.is_position_free"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.is_position_free" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a map position is free of obstacles and entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – X coordinate (tile index).</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – Y coordinate (tile index).</p></li>
+<li><p><strong>ignore_entity</strong> (<a class="reference internal" href="../../entities/base/index.html#entities.base.Entity" title="entities.base.Entity"><em>Entity</em></a><em>, </em><em>optional</em>) – An entity to ignore in the check (e.g., the moving entity itself).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the position is free, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.render" title="Link to this definition">¶</a></dt>
+<dd><p>Render the game map, entities, UI, and overlays to the screen.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.check_item_encounter">
+<span class="sig-name descname"><span class="pre">check_item_encounter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.check_item_encounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.check_item_encounter" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the player is on an item and handle item pickup encounters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="core.game.Game.handle_map_click">
+<span class="sig-name descname"><span class="pre">handle_map_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/core/game.html#Game.handle_map_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.game.Game.handle_map_click" title="Link to this definition">¶</a></dt>
+<dd><p>Handle mouse clicks on the map, calculate pathfinding, and update player path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mx</strong> (<em>int</em>) – Mouse X coordinate (pixels).</p></li>
+<li><p><strong>my</strong> (<em>int</em>) – Mouse Y coordinate (pixels).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/core/game/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

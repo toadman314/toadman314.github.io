@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>entities.player &#8212; Hajduk  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-entities.player">
+<span id="entities-player"></span><h1>entities.player<a class="headerlink" href="#module-entities.player" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#entities.player.logger" title="entities.player.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#entities.player.Player" title="entities.player.Player"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Player</span></code></a></p></td>
+<td><p>Represents the player character, including inventory, equipment, all stat categories, and active effects.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="entities.player.logger">
+<span class="sig-prename descclassname"><span class="pre">entities.player.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="reference internal" href="../../../_modules/entities/player.html#logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="entities.player.Player">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">entities.player.</span></span><span class="sig-name descname"><span class="pre">Player</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#entities.base.Entity" title="entities.base.Entity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entities.base.Entity</span></code></a></p>
+<p>Represents the player character, including inventory, equipment, all stat categories, and active effects.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.inventory">
+<span class="sig-name descname"><span class="pre">inventory</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.inventory" title="Link to this definition">¶</a></dt>
+<dd><p>List of InventorySlot objects representing the player’s inventory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.equipment">
+<span class="sig-name descname"><span class="pre">equipment</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.equipment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.equipment" title="Link to this definition">¶</a></dt>
+<dd><p>Dictionary of equipped items by slot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.sprite">
+<span class="sig-name descname"><span class="pre">sprite</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.sprite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.sprite" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s sprite image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pygame.Surface</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.planned_path">
+<span class="sig-name descname"><span class="pre">planned_path</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.planned_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.planned_path" title="Link to this definition">¶</a></dt>
+<dd><p>List of (x, y) tuples representing the planned movement path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.planned_path_costs">
+<span class="sig-name descname"><span class="pre">planned_path_costs</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.planned_path_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.planned_path_costs" title="Link to this definition">¶</a></dt>
+<dd><p>List of movement costs for each step in the planned path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.effects">
+<span class="sig-name descname"><span class="pre">effects</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.effects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.effects" title="Link to this definition">¶</a></dt>
+<dd><p>Manages all stat modifiers and effects on the player.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../systems/effects/index.html#systems.effects.EffectManager" title="systems.effects.EffectManager">EffectManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../ui/inventory/index.html#ui.inventory.InventoryUI" title="ui.inventory.InventoryUI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ui.inventory.InventoryUI</span></code></a></dt><dd><p>Inventory panel for this player.</p>
+</dd>
+<dt><a class="reference internal" href="../../ui/character/index.html#ui.character.CharacterUI" title="ui.character.CharacterUI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ui.character.CharacterUI</span></code></a></dt><dd><p>Character sheet panel for this player.</p>
+</dd>
+<dt><a class="reference internal" href="../../ui/questlog/index.html#ui.questlog.QuestLogUI" title="ui.questlog.QuestLogUI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ui.questlog.QuestLogUI</span></code></a></dt><dd><p>Quest log panel for this player.</p>
+</dd>
+<dt><a class="reference internal" href="../../ui/abilities/index.html#ui.abilities.AbilitiesUI" title="ui.abilities.AbilitiesUI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ui.abilities.AbilitiesUI</span></code></a></dt><dd><p>Abilities/perks panel for this player.</p>
+</dd>
+<dt><a class="reference internal" href="../../systems/quest/index.html#systems.quest.QuestSystem" title="systems.quest.QuestSystem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systems.quest.QuestSystem</span></code></a></dt><dd><p>Tracks and updates player quests.</p>
+</dd>
+<dt><a class="reference internal" href="../../core/state/index.html#core.state.GameState" title="core.state.GameState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.state.GameState</span></code></a></dt><dd><p>Stores player data in game state.</p>
+</dd>
+<dt><a class="reference internal" href="../../systems/effects/index.html#systems.effects.EffectManager" title="systems.effects.EffectManager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systems.effects.EffectManager</span></code></a></dt><dd><p>Handles all stat modifications.</p>
+</dd>
+<dt><a class="reference internal" href="../../systems/effects/index.html#systems.effects.Effect" title="systems.effects.Effect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">systems.effects.Effect</span></code></a></dt><dd><p>Represents a single stat modifier.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>InventoryUI, CharacterUI, QuestLogUI, AbilitiesUI: UI panels displaying player data.</p></li>
+<li><p>QuestSystem: Tracks and updates player quests.</p></li>
+<li><p>GameState: Stores and loads player data.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.color">
+<span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(80,</span> <span class="pre">200,</span> <span class="pre">120)</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.color" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">inventory</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">equipment</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.equipment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">sprite</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.sprite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.health_condition">
+<span class="sig-name descname"><span class="pre">health_condition</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Healthy'</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.health_condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.health_condition" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.money">
+<span class="sig-name descname"><span class="pre">money</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.money"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.money" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.weight" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="entities.player.Player.weight_limit">
+<span class="sig-name descname"><span class="pre">weight_limit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.weight_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.weight_limit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">planned_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.planned_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">planned_path_costs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="reference internal" href="../../../_modules/entities/player.html#Player.planned_path_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">effects</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.effects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.action_points">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">action_points</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.action_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.action_points" title="Link to this definition">¶</a></dt>
+<dd><p>The current action points available to the player.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.max_action_points">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_action_points</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.max_action_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.max_action_points" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum action points the player can have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.health_threshold">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">health_threshold</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.health_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.health_threshold" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s health threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.blood_threshold">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blood_threshold</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.blood_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.blood_threshold" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s blood threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.stamina_threshold">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stamina_threshold</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.stamina_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.stamina_threshold" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s stamina threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.carry_limit">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">carry_limit</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.carry_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.carry_limit" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s carry limit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.combat_mobility">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combat_mobility</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.combat_mobility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.combat_mobility" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s combat mobility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.combat_speed">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combat_speed</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.combat_speed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.combat_speed" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s combat speed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.damage_resistance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">damage_resistance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.damage_resistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.damage_resistance" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s damage resistance (percentage as a fraction, e.g., 0.75 for 75%).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.blunt_resistance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blunt_resistance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.blunt_resistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.blunt_resistance" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s blunt damage resistance (percentage as a fraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.sharp_resistance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sharp_resistance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.sharp_resistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.sharp_resistance" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s sharp damage resistance (percentage as a fraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.blocking_chance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blocking_chance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.blocking_chance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.blocking_chance" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s chance to block an attack (percentage as a fraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.attack_damage">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attack_damage</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.attack_damage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.attack_damage" title="Link to this definition">¶</a></dt>
+<dd><p>The base damage dealt by the player’s attacks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.close_hit_chance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close_hit_chance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.close_hit_chance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.close_hit_chance" title="Link to this definition">¶</a></dt>
+<dd><p>The chance to hit a target with close-range attacks (percentage as a fraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.far_hit_chance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">far_hit_chance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.far_hit_chance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.far_hit_chance" title="Link to this definition">¶</a></dt>
+<dd><p>The chance to hit a target with far-range attacks (percentage as a fraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.combat_vision">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combat_vision</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.combat_vision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.combat_vision" title="Link to this definition">¶</a></dt>
+<dd><p>The range of the player’s combat vision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.observance">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observance</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.observance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.observance" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s observance, affecting detection of hidden objects or enemies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.inconspicuousness">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inconspicuousness</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.inconspicuousness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.inconspicuousness" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s inconspicuousness, affecting stealth and hiding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.notoriety">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">notoriety</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.notoriety"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.notoriety" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s notoriety, affecting how NPCs react to them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.sleep_need">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sleep_need</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.sleep_need"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.sleep_need" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s need for sleep, affecting energy recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.food_need">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">food_need</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.food_need"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.food_need" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s need for food, affecting health and stamina.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.drink_need">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">drink_need</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.drink_need"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.drink_need" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s need for drink, affecting health and stamina.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.sobriety">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sobriety</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.sobriety"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.sobriety" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s sobriety, affecting health and stamina recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.strength_stat">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">strength_stat</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.strength_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.strength_stat" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s strength stat (innate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.agility_stat">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">agility_stat</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.agility_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.agility_stat" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s agility stat (innate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.dexterity_stat">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dexterity_stat</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.dexterity_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.dexterity_stat" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s dexterity stat (innate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.intelligence_stat">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intelligence_stat</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.intelligence_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.intelligence_stat" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s intelligence stat (innate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.charisma_stat">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">charisma_stat</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.charisma_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.charisma_stat" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s charisma stat (innate).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.prowess">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prowess</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.prowess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.prowess" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s prowess (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.acrobatics">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">acrobatics</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.acrobatics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.acrobatics" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s acrobatics (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.speaking">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">speaking</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.speaking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.speaking" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s speaking (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.acumen">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">acumen</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.acumen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.acumen" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s acumen (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.onehand_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">onehand_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.onehand_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.onehand_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s one-hand wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.twohand_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">twohand_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.twohand_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.twohand_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s two-hand wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.pole_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pole_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.pole_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.pole_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s pole weapon wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.offhand_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">offhand_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.offhand_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.offhand_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s off-hand wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.bow_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bow_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.bow_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.bow_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s bow wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.crossbow_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">crossbow_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.crossbow_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.crossbow_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s crossbow wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.handcannon_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">handcannon_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.handcannon_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.handcannon_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s handcannon wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.armor_wielding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">armor_wielding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.armor_wielding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.armor_wielding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s armor wielding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.horse_riding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">horse_riding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.horse_riding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.horse_riding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s horse riding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.cart_riding">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cart_riding</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.cart_riding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.cart_riding" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s cart riding (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.medical_knowledge">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">medical_knowledge</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.medical_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.medical_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s medical knowledge (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.engineering_knowledge">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">engineering_knowledge</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.engineering_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.engineering_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s engineering knowledge (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.crafting_knowledge">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">crafting_knowledge</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.crafting_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.crafting_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s crafting knowledge (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.survival_knowledge">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">survival_knowledge</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.survival_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.survival_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>The player’s survival knowledge (learned stat).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.basic_stats">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basic_stats</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.basic_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.basic_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Dictionary of all basic stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.innate_stats">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">innate_stats</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.innate_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.innate_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Dictionary of all innate stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="entities.player.Player.learned_stats">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">learned_stats</span></span><a class="reference internal" href="../../../_modules/entities/player.html#Player.learned_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.learned_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Dictionary of all learned stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.refill_action_points">
+<span class="sig-name descname"><span class="pre">refill_action_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.refill_action_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.refill_action_points" title="Link to this definition">¶</a></dt>
+<dd><p>Refill the player’s action points to the maximum value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.choose_interaction">
+<span class="sig-name descname"><span class="pre">choose_interaction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encounter_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.choose_interaction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.choose_interaction" title="Link to this definition">¶</a></dt>
+<dd><p>Determines which interaction to use based on the encounter type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>object</em>) – The target entity or item.</p></li>
+<li><p><strong>encounter_type</strong> (<em>str</em>) – The type of encounter (“entity”, “item”, or “object”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The chosen interaction object, or None if no valid interaction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.add_item">
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.add_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.add_item" title="Link to this definition">¶</a></dt>
+<dd><p>Adds an item (with optional count) to the inventory, handling stacking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> (<a class="reference internal" href="../item/index.html#entities.item.Item" title="entities.item.Item"><em>Item</em></a>) – The item to add.</p></li>
+<li><p><strong>count</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of items to add (default is 1).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.remove_item">
+<span class="sig-name descname"><span class="pre">remove_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slot_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.remove_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.remove_item" title="Link to this definition">¶</a></dt>
+<dd><p>Removes a specified count of items from a given inventory slot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot_index</strong> (<em>int</em>) – The index of the inventory slot.</p></li>
+<li><p><strong>count</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of items to remove (default is 1).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.drop_item">
+<span class="sig-name descname"><span class="pre">drop_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_map</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.drop_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.drop_item" title="Link to this definition">¶</a></dt>
+<dd><p>Drops an item from the inventory onto the map at the player’s position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slot</strong> (<a class="reference internal" href="../item/index.html#entities.item.InventorySlot" title="entities.item.InventorySlot"><em>InventorySlot</em></a>) – The inventory slot containing the item to drop.</p></li>
+<li><p><strong>game_map</strong> (<em>GameMap</em>) – The game map instance, used to determine drop position.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.use_item">
+<span class="sig-name descname"><span class="pre">use_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slot</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.use_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.use_item" title="Link to this definition">¶</a></dt>
+<dd><p>Uses an item from the inventory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slot</strong> (<a class="reference internal" href="../item/index.html#entities.item.InventorySlot" title="entities.item.InventorySlot"><em>InventorySlot</em></a>) – The inventory slot containing the item to use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.equip_item">
+<span class="sig-name descname"><span class="pre">equip_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slot_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.equip_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.equip_item" title="Link to this definition">¶</a></dt>
+<dd><p>Equips an item from the inventory to the appropriate equipment slot.
+Swaps out any currently equipped item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slot_index</strong> (<em>int</em>) – The index of the inventory slot containing the item to equip.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.draw">
+<span class="sig-name descname"><span class="pre">draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.draw" title="Link to this definition">¶</a></dt>
+<dd><p>Draw the entity as a rectangle or sprite on the screen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>screen</strong> (<em>pygame.Surface</em>) – The display surface to draw on.</p></li>
+<li><p><strong>camera</strong> (<a class="reference internal" href="../../core/camera/index.html#core.camera.Camera" title="core.camera.Camera"><em>Camera</em></a>) – The camera for coordinate transforms.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.confirm_move">
+<span class="sig-name descname"><span class="pre">confirm_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">game_map</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.confirm_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.confirm_move" title="Link to this definition">¶</a></dt>
+<dd><p>Move along the planned path, consuming action points (cost 1 for orthogonal, 1.5 for diagonal).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>game_map</strong> (<em>GameMap</em>) – The game map instance, used to check passability of tiles.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The number of steps successfully moved.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entities.player.Player.get_modified_stat">
+<span class="sig-name descname"><span class="pre">get_modified_stat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/entities/player.html#Player.get_modified_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entities.player.Player.get_modified_stat" title="Link to this definition">¶</a></dt>
+<dd><p>Get the stat value after applying all active effects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stat_name</strong> (<em>str</em>) – The name of the stat to query.</p></li>
+<li><p><strong>base_value</strong> (<em>float</em>) – The base value of the stat.</p></li>
+<li><p><strong>context</strong> (<em>dict</em><em>, </em><em>optional</em>) – Context for conditioned/contextual effects.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified stat value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Hajduk</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Hajduk Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/entities/player/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
